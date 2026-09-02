@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Generate topic constants and TypeScript declarations from one source.
+"""
+Generate topic constants and TypeScript declarations from one source.
 
 FR-IF-03 requires topic names to be defined once and imported everywhere;
 FR-IF-06 requires TypeScript declarations so the dashboard type-checks message
@@ -210,11 +211,11 @@ def _fields_from_text(text: str) -> list[Field]:
 # --------------------------------------------------------------------------
 
 def banner(prefix: str) -> str:
-    return "\n".join((prefix + " " + l).rstrip() for l in BANNER_LINES)
+    return "\n".join((prefix + " " + ln).rstrip() for ln in BANNER_LINES)
 
 
 def emit_hpp(registry: dict) -> str:
-    out = ["// " + l if l else "//" for l in BANNER_LINES]
+    out = ["// " + ln if ln else "//" for ln in BANNER_LINES]
     out += [
         "",
         "#ifndef BAGWIS_INTERFACES__TOPICS_HPP_",
@@ -248,7 +249,9 @@ def emit_hpp(registry: dict) -> str:
 
 
 def emit_py(registry: dict) -> str:
-    out = ['"""' + BANNER_LINES[0]]
+    # Summary on the second line, per pep257 D213 -- the generated module is
+    # linted by ament_lint_auto exactly like hand-written source.
+    out = ['"""', BANNER_LINES[0]]
     out += BANNER_LINES[1:]
     out += ['"""', "", "from __future__ import annotations", ""]
 
@@ -299,7 +302,7 @@ def emit_py(registry: dict) -> str:
 
 
 def emit_ts_topics(registry: dict) -> str:
-    out = ["// " + l if l else "//" for l in BANNER_LINES]
+    out = ["// " + ln if ln else "//" for ln in BANNER_LINES]
     out.append("")
     for t in registry["topics"]:
         if t.get("note"):
@@ -336,7 +339,8 @@ def ts_type(field: Field, local_names: set[str]) -> str:
 def ts_imports(
     fields: list[Field], local_names: set[str], self_name: str, msg_dir: str = "."
 ) -> list[str]:
-    """Import lines for a generated TypeScript file.
+    """
+    Import lines for a generated TypeScript file.
 
     msg_dir is the path from the emitted file back to ts/msg -- "." for files in
     ts/msg itself, "../msg" for the service files in ts/srv.
@@ -359,7 +363,7 @@ def ts_imports(
 
 
 def emit_ts_msg(name: str, constants, fields, local_names) -> str:
-    out = ["// " + l if l else "//" for l in BANNER_LINES]
+    out = ["// " + ln if ln else "//" for ln in BANNER_LINES]
     out.append("")
     imports = ts_imports(fields, local_names, name)
     if imports:
@@ -381,7 +385,7 @@ def emit_ts_msg(name: str, constants, fields, local_names) -> str:
 
 
 def emit_ts_srv(name: str, request, response, local_names) -> str:
-    out = ["// " + l if l else "//" for l in BANNER_LINES]
+    out = ["// " + ln if ln else "//" for ln in BANNER_LINES]
     out.append("")
     imports = ts_imports(request + response, local_names, name, "../msg")
     if imports:
@@ -397,7 +401,7 @@ def emit_ts_srv(name: str, request, response, local_names) -> str:
 
 
 def emit_ts_external() -> str:
-    out = ["// " + l if l else "//" for l in BANNER_LINES]
+    out = ["// " + ln if ln else "//" for ln in BANNER_LINES]
     out += [
         "//",
         "// Shapes owned by other ROS packages. Declared here rather than generated,",
@@ -428,7 +432,7 @@ def emit_ts_external() -> str:
 
 
 def emit_ts_index(msg_names, srv_names) -> str:
-    out = ["// " + l if l else "//" for l in BANNER_LINES]
+    out = ["// " + ln if ln else "//" for ln in BANNER_LINES]
     out += ["", 'export * from "./topics";', 'export * from "./msg/_external";']
     out += [f'export * from "./msg/{n}";' for n in msg_names]
     out += [f'export * from "./srv/{n}";' for n in srv_names]

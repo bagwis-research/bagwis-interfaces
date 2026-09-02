@@ -1,4 +1,5 @@
-"""THIS FILE IS GENERATED. DO NOT EDIT.
+"""
+THIS FILE IS GENERATED. DO NOT EDIT.
 
 Source:    topics/registry.yaml and msg/*.msg
 Generator: scripts/generate.py
