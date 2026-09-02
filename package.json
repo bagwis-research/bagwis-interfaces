@@ -1,0 +1,23 @@
+{
+  "name": "@bagwis/interfaces",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Generated TypeScript topic constants and ROS 2 message shapes for the BAGWIS dashboard (FR-IF-03, FR-IF-06).",
+  "types": "ts/index.ts",
+  "main": "ts/index.ts",
+  "exports": {
+    ".": "./ts/index.ts",
+    "./topics": "./ts/topics.ts",
+    "./msg/*": "./ts/msg/*.ts",
+    "./srv/*": "./ts/srv/*.ts"
+  },
+  "files": ["ts"],
+  "scripts": {
+    "generate": "python3 scripts/generate.py",
+    "typecheck": "tsc --noEmit",
+    "verify": "python3 scripts/generate.py --check && tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.0"
+  }
+}

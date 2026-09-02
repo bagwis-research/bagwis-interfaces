@@ -1,0 +1,126 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly arm64 canary. The emulated build is too slow to run on every push
+    # (see the build-arm64 job), but a monthly-stale toolchain is worse.
+    - cron: "0 3 * * 1"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+
+  # FR-IF-11 / T0.1.5 -- NDVI is spelled correctly, everywhere.
+  spell:
+    name: NDVI spelling
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: grep
+        run: bash .github/scripts/check-ndvi-spelling.sh
+
+  # FR-IF-03 / FR-IF-06 -- the committed generator output matches its source.
+  codegen:
+    name: generated output is current
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: regenerate
+        run: python3 scripts/generate.py
+      - name: fail if anything moved
+        run: |
+          if ! git diff --exit-code; then
+            echo "::error::Generated files are stale. Run: python3 scripts/generate.py"
+            exit 1
+          fi
+
+  # FR-IF-07 / T0.2.5 -- a .msg change without a version bump fails.
+  version-bump:
+    name: msg change requires version bump
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: compare against base
+        run: bash .github/scripts/check-version-bump.sh "origin/${{ github.base_ref }}"
+
+  # FR-IF-06 -- the dashboard type-checks message shapes at build time.
+  typecheck:
+    name: tsc --noEmit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - run: npm ci
+      - run: npx tsc --noEmit
+
+  build-amd64:
+    name: colcon build (amd64)
+    runs-on: ubuntu-latest
+    container: ros:humble-ros-base
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: src/bagwis_interfaces
+      - name: rosdep
+        run: |
+          apt-get update
+          rosdep update --rosdistro humble
+          rosdep install --from-paths src --ignore-src -y
+      - name: build and test
+        shell: bash
+        run: |
+          source /opt/ros/humble/setup.bash
+          colcon build --event-handlers console_direct+
+          colcon test --event-handlers console_direct+
+          colcon test-result --verbose
+      - name: interface is introspectable
+        shell: bash
+        run: |
+          source install/setup.bash
+          ros2 interface show bagwis_interfaces/msg/FinalMetrics
+
+  # FR-IF-09 / T0.1.4 -- builds on the Pi, not just on an x86 laptop.
+  #
+  # QEMU-emulated colcon runs roughly 10-20x native, and private repos on the
+  # org's GitHub Free plan get 2,000 Actions minutes a month. So this runs on
+  # PRs to main and on the weekly cron, never on every push. Free arm64
+  # GitHub-hosted runners are public-repo only; if these repos ever go public,
+  # switch `runs-on` to ubuntu-24.04-arm and delete the QEMU step.
+  build-arm64:
+    name: colcon build (arm64, emulated)
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request' || github.event_name == 'schedule'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      - name: build under arm64v8/ros:humble
+        run: |
+          docker run --rm --platform linux/arm64 \
+            -v "$PWD:/ws/src/bagwis_interfaces" -w /ws \
+            arm64v8/ros:humble \
+            bash -lc '
+              set -eux
+              apt-get update
+              rosdep update --rosdistro humble
+              rosdep install --from-paths src --ignore-src -y
+              source /opt/ros/humble/setup.bash
+              colcon build --event-handlers console_direct+
+              source install/setup.bash
+              ros2 interface show bagwis_interfaces/msg/FinalMetrics
+            '

@@ -1,0 +1,8 @@
+# SRS-00 SS4.9. Served on /mission/state by rosbridge_websocket_node.
+#
+# Lets the dashboard recover full state after a reconnect without waiting for
+# the next 1 Hz publication (FR-WEB-35).
+string mission_id
+---
+FinalMetrics snapshot
+bool ok

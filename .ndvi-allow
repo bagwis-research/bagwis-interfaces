@@ -1,0 +1,7 @@
+# Paths where the literal string 'nvdi' is permitted, one glob per line.
+#
+# FR-IF-11 rejects any misspelling of NDVI in the repository, because a transposed
+# topic name fails silently (C-13). The only legitimate use is quoting the
+# defect itself -- which the code repositories never need to do, so this file
+# is empty here. bagwis-docs has entries, because SRS-00 and the ROADMAP quote
+# the wrong topic name deliberately, as the thing C-13 is correcting.

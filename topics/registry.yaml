@@ -1,0 +1,186 @@
+# BAGWIS canonical topic registry -- the single source of truth for FR-IF-03.
+#
+# Every topic and service name in the system is written down HERE, once. No
+# repository retypes a name. scripts/generate.py turns this file into
+# topics.hpp, topics.py and topics.ts so C++, Python and TypeScript all read
+# from the same source.
+#
+# This exists because a transposed topic name fails SILENTLY -- the subscriber
+# simply receives nothing, and it presents as a dead sensor (C-13). Three guards
+# enforce correctness; this file is the first:
+#   1. these constants, imported everywhere
+#   2. the startup graph-conformance check (FR-CN-63), which compares
+#      `ros2 topic list` against the `topics:` block below
+#   3. the CI grep rejecting any misspelling of NDVI (FR-IF-11)
+#
+# The `type` field is deliberately recorded even for topics whose message comes
+# from another package. bagwis_interfaces does NOT build-depend on vision_msgs,
+# sensor_msgs, geometry_msgs or mavros_msgs -- no field in msg/ or srv/
+# references them, and declaring them would force those apt packages onto every
+# machine that builds this package, including the Pi. Each consumer repo
+# declares what it actually subscribes to. The contract still lives in one file.
+#
+# Format: intentionally a flat subset of YAML so scripts/generate.py can parse
+# it with the standard library alone (no pyyaml on the Pi).
+
+version: 1
+
+topics:
+
+  # --- Layer 1: camera (SRS-00 SS3.1, SS3.2) ---
+
+  - const: CAMERA_IMAGE_RAW
+    name: /camera/image_raw
+    type: sensor_msgs/msg/Image
+    publisher: v4l2_camera_node
+    subscribers: []
+    qos: sensor_data
+    note: intra-process only -- never crosses DDS (C-01)
+
+  - const: CAMERA_IMAGE_RAW_COMPRESSED
+    name: /camera/image_raw/compressed
+    type: sensor_msgs/msg/CompressedImage
+    publisher: v4l2_camera_node
+    subscribers: [preprocessing_node]
+    qos: sensor_data
+    note: image_transport compressed plugin -- the only video crossing the radio link
+
+  - const: CAMERA_IMAGE_PROCESSED
+    name: /camera/image_processed
+    type: sensor_msgs/msg/Image
+    publisher: preprocessing_node
+    subscribers: [yolo26n_inference_node]
+    qos: sensor_data
+
+  - const: CAMERA_INFO
+    name: /camera/camera_info
+    type: sensor_msgs/msg/CameraInfo
+    publisher: v4l2_camera_node
+    subscribers: [georeferencing_node]
+    qos: default
+    note: intrinsics for GSD
+
+  # --- Layer 2: perception (SRS-00 SS3.1) ---
+
+  - const: AI_DETECTIONS
+    name: /ai/detections
+    type: vision_msgs/msg/Detection2DArray
+    publisher: dynamic_sampling_node
+    subscribers: [georeferencing_node, ndvi_computation_node]
+    qos: default
+    note: C-17 -- the diagram writes Detection2dArray; the ROS type is Detection2DArray
+
+  - const: AI_NDVI
+    name: /ai/ndvi
+    type: bagwis_interfaces/msg/NdviResult
+    publisher: ndvi_computation_node
+    subscribers: [georeferencing_node]
+    qos: default
+    note: C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
+
+  # --- Layer 1: MAVROS telemetry (SRS-00 SS3.1, SS3.2) ---
+
+  - const: MAVROS_GLOBAL_POSITION
+    name: /mavros/global_position/global
+    type: sensor_msgs/msg/NavSatFix
+    publisher: mavros_node
+    subscribers: [georeferencing_node]
+    qos: sensor_data
+
+  - const: MAVROS_REL_ALT
+    name: /mavros/global_position/rel_alt
+    type: std_msgs/msg/Float64
+    publisher: mavros_node
+    subscribers: [georeferencing_node, dynamic_sampling_node]
+    qos: sensor_data
+    note: GSD, FOV footprint
+
+  - const: MAVROS_VELOCITY_LOCAL
+    name: /mavros/local_position/velocity_local
+    type: geometry_msgs/msg/TwistStamped
+    publisher: mavros_node
+    subscribers: [dynamic_sampling_node]
+    qos: sensor_data
+    note: ground speed -> sampling interval
+
+  - const: MAVROS_IMU
+    name: /mavros/imu/data
+    type: sensor_msgs/msg/Imu
+    publisher: mavros_node
+    subscribers: [georeferencing_node]
+    qos: sensor_data
+    note: yaw -> North/East rotation
+
+  - const: MAVROS_BATTERY
+    name: /mavros/battery
+    type: sensor_msgs/msg/BatteryState
+    publisher: mavros_node
+    subscribers: [health_node]
+    qos: sensor_data
+    note: operator HUD
+
+  - const: MAVROS_RANGEFINDER
+    name: /mavros/distance_sensor/rangefinder
+    type: sensor_msgs/msg/Range
+    publisher: mavros_node
+    subscribers: [lidar_safety_node]
+    qos: sensor_data
+    note: VL53L1X, advisory only -- never feeds altitude or GSD (DD-CN-12)
+
+  - const: MAVROS_WAYPOINTS
+    name: /mavros/mission/waypoints
+    type: mavros_msgs/msg/WaypointList
+    publisher: rosbridge_websocket_node
+    subscribers: [mavros_node]
+    qos: default
+    note: uplink -- waypoint guard vetoes >120 m AGL (T1.2.5)
+
+  # --- Layer 4: dashboard (SRS-00 SS3, SS4) ---
+
+  - const: DASHBOARD_FINAL_METRICS
+    name: /dashboard/final_metrics
+    type: bagwis_interfaces/msg/FinalMetrics
+    publisher: georeferencing_node
+    subscribers: [rosbridge_websocket_node]
+    qos: default
+
+  - const: DASHBOARD_SAFETY_ALERTS
+    name: /dashboard/safety_alerts
+    type: bagwis_interfaces/msg/SafetyAlert
+    publisher: lidar_safety_node
+    subscribers: [rosbridge_websocket_node]
+    qos: default
+    note: independent of the perception chain (DD-CN-10)
+
+  - const: DASHBOARD_SYSTEM_HEALTH
+    name: /dashboard/system_health
+    type: bagwis_interfaces/msg/SystemHealth
+    publisher: health_node
+    subscribers: [rosbridge_websocket_node]
+    qos: default
+    note: NEW -- not named in SRS-00 SS3; justified by FR-CN-67 and SADD-04 healthStore.ts
+
+  - const: DASHBOARD_ASSUMPTIONS
+    name: /dashboard/assumptions
+    type: bagwis_interfaces/msg/AnalyticsAssumptions
+    publisher: georeferencing_node
+    subscribers: [rosbridge_websocket_node]
+    qos: transient_local
+    note: NEW -- not named in SRS-00 SS3; justified by FR-CN-47 and FR-WEB-21. Latched.
+
+services:
+
+  - const: MISSION_START
+    name: /mission/start
+    type: bagwis_interfaces/srv/StartMission
+    server: rosbridge_websocket_node
+
+  - const: MISSION_STOP
+    name: /mission/stop
+    type: bagwis_interfaces/srv/StopMission
+    server: rosbridge_websocket_node
+
+  - const: MISSION_STATE
+    name: /mission/state
+    type: bagwis_interfaces/srv/GetMissionState
+    server: rosbridge_websocket_node

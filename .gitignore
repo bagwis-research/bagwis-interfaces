@@ -1,0 +1,12 @@
+# Node / TypeScript
+node_modules/
+*.tsbuildinfo
+
+# colcon
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]

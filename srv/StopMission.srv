@@ -1,0 +1,4 @@
+# SRS-00 SS4.9. Served on /mission/stop by rosbridge_websocket_node.
+---
+bool ok
+string mission_id

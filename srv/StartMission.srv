@@ -1,0 +1,6 @@
+# SRS-00 SS4.9. Served on /mission/start by rosbridge_websocket_node.
+string mission_id
+FlightParams params
+---
+bool ok
+string message

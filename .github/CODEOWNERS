@@ -1,0 +1,8 @@
+# SRS-00 names this repository jointly owned: changes need both approvals.
+#
+# NOTE: bagwis-research is on GitHub Free with private repositories, where
+# branch protection and rulesets return HTTP 403. CODEOWNERS still auto-requests
+# these reviewers on every PR, but approval is NOT enforced by the platform --
+# it is enforced by the convention in CONTRIBUTING.md. See T0.1.1.
+
+*  @JoshuaHM-p4 @EarlClydeeee
