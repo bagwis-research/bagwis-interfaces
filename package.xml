@@ -9,9 +9,9 @@
     bagwis-core and bagwis-web. See SRS-00.
   </description>
   <maintainer email="joshuahm.2004@gmail.com">Joshua</maintainer>
+  <license>MIT</license>
   <author>Joshua</author>
   <author>Earl Clyde</author>
-  <license>MIT</license>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>rosidl_default_generators</buildtool_depend>
   <buildtool_depend>ament_cmake_python</buildtool_depend>
