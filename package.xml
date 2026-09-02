@@ -27,8 +27,8 @@
     sensor_msgs, vision_msgs, geometry_msgs and mavros_msgs are deliberately NOT
     declared. They appear in the SRS-00 SS3 topic table, but no field here
     references them, so depending on them would force ros-humble-mavros-msgs and
-    ros-humble-vision-msgs onto every machine that builds this package -- the Pi
-    Zero 2 W included -- to satisfy a dependency nothing uses. Their types are
+    ros-humble-vision-msgs onto every machine that builds this package, the Pi
+    Zero 2 W included, to satisfy a dependency nothing uses. Their types are
     recorded in topics/registry.yaml, so the contract is still written down once,
     and each consumer declares what it actually subscribes to.
   -->
