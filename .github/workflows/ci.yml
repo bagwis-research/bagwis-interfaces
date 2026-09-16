@@ -119,8 +119,13 @@ jobs:
               apt-get update
               rosdep update --rosdistro humble
               rosdep install --from-paths src --ignore-src -y
+              # setup.bash reads unset variables, so nounset would abort the job here.
+              set +u
               source /opt/ros/humble/setup.bash
+              set -u
               colcon build --event-handlers console_direct+
+              set +u
               source install/setup.bash
+              set -u
               ros2 interface show bagwis_interfaces/msg/FinalMetrics
             '
