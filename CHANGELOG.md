@@ -15,6 +15,33 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [0.1.1] — 2026-09-27
+
+Target distro moves from ROS 2 Humble to ROS 2 Jazzy. No `msg/` or `srv/`
+change: the wire format, field names and topic names are identical, so this is
+a patch release under FR-IF-04/05.
+
+### Changed
+
+- CI builds and tests against `ros:jazzy-ros-base` (amd64) and `arm64v8/ros:jazzy`
+  (arm64) instead of Humble. The codegen job runs Python 3.12, matching Ubuntu
+  24.04.
+- `scripts/generate.py` and the generated `python/topics.py` use single-quoted
+  string literals. Jazzy's `ament_flake8` enforces flake8-quotes (Q000), which
+  the Humble build did not; without this `colcon test` reports 459 lint
+  failures under Jazzy. `topics.py` exports exactly the same names and values as 0.1.0;
+  `topics.hpp` and the TypeScript output are unchanged.
+- `scripts/generate.py` import order fixed (flake8 I100, Google style).
+- `package.xml` dependency comment no longer names a specific distro.
+
+### Consumers
+
+`bagwis-airborne`, `bagwis-core` and `bagwis-web` keep building against the
+`v0.1.0` tag until they re-pin. Re-pinning to `v0.1.1` needs no code change on
+their side, but a consumer's own CI must move to Jazzy at the same time.
+
+---
+
 ## [0.1.0] — 2026-09-02
 
 First real release. Supersedes the `v0.1.0` tag that previously pointed at a
