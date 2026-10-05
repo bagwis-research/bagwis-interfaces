@@ -21,6 +21,10 @@ export const CAMERA_IMAGE_PROCESSED = "/camera/image_processed" as const;
 /** Type: `sensor_msgs/msg/CameraInfo` */
 export const CAMERA_INFO = "/camera/camera_info" as const;
 
+/** every inferred frame, before admission (SRS-00 SS3 internal row; FR-CN-15) */
+/** Type: `vision_msgs/msg/Detection2DArray` */
+export const AI_DETECTIONS_RAW = "/ai/detections_raw" as const;
+
 /** C-17 -- the diagram writes Detection2dArray; the ROS type is Detection2DArray */
 /** Type: `vision_msgs/msg/Detection2DArray` */
 export const AI_DETECTIONS = "/ai/detections" as const;
@@ -28,6 +32,10 @@ export const AI_DETECTIONS = "/ai/detections" as const;
 /** C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. */
 /** Type: `bagwis_interfaces/msg/NdviResult` */
 export const AI_NDVI = "/ai/ndvi" as const;
+
+/** NEW -- not in SRS-00 SS3; FR-CN-07, FR-CN-09. health_node copies it to SystemHealth */
+/** Type: `bagwis_interfaces/msg/AdmissionStatus` */
+export const CORE_ADMISSION_STATUS = "/core/admission_status" as const;
 
 /** Type: `sensor_msgs/msg/NavSatFix` */
 export const MAVROS_GLOBAL_POSITION = "/mavros/global_position/global" as const;
@@ -86,8 +94,10 @@ export const ALL_TOPICS = [
   CAMERA_IMAGE_RAW_COMPRESSED,
   CAMERA_IMAGE_PROCESSED,
   CAMERA_INFO,
+  AI_DETECTIONS_RAW,
   AI_DETECTIONS,
   AI_NDVI,
+  CORE_ADMISSION_STATUS,
   MAVROS_GLOBAL_POSITION,
   MAVROS_REL_ALT,
   MAVROS_VELOCITY_LOCAL,

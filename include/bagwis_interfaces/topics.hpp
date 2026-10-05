@@ -29,6 +29,10 @@ inline constexpr char CAMERA_IMAGE_PROCESSED[] = "/camera/image_processed";
 /// Type: sensor_msgs/msg/CameraInfo
 inline constexpr char CAMERA_INFO[] = "/camera/camera_info";
 
+/// every inferred frame, before admission (SRS-00 SS3 internal row; FR-CN-15)
+/// Type: vision_msgs/msg/Detection2DArray
+inline constexpr char AI_DETECTIONS_RAW[] = "/ai/detections_raw";
+
 /// C-17 -- the diagram writes Detection2dArray; the ROS type is Detection2DArray
 /// Type: vision_msgs/msg/Detection2DArray
 inline constexpr char AI_DETECTIONS[] = "/ai/detections";
@@ -36,6 +40,10 @@ inline constexpr char AI_DETECTIONS[] = "/ai/detections";
 /// C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
 /// Type: bagwis_interfaces/msg/NdviResult
 inline constexpr char AI_NDVI[] = "/ai/ndvi";
+
+/// NEW -- not in SRS-00 SS3; FR-CN-07, FR-CN-09. health_node copies it to SystemHealth
+/// Type: bagwis_interfaces/msg/AdmissionStatus
+inline constexpr char CORE_ADMISSION_STATUS[] = "/core/admission_status";
 
 /// Type: sensor_msgs/msg/NavSatFix
 inline constexpr char MAVROS_GLOBAL_POSITION[] = "/mavros/global_position/global";

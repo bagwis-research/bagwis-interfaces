@@ -8,6 +8,7 @@
 
 export * from "./topics";
 export * from "./msg/_external";
+export * from "./msg/AdmissionStatus";
 export * from "./msg/AnalyticsAssumptions";
 export * from "./msg/FinalMetrics";
 export * from "./msg/FlightParams";

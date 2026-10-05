@@ -2,8 +2,9 @@
 # health_node. Feeds the operator display and the ISO 25010 Reliability
 # evidence. SRS-00 SS4.7.
 #
-# sampling_interval_s and fov_footprint_m are here so the non-overlap claim is
-# observable rather than asserted (FR-CN-07).
+# sampling_interval_s, fov_footprint_m, admitted_frames and shed_rate are here so
+# the non-overlap claim is observable rather than asserted (FR-CN-07, FR-CN-09).
+# health_node copies them from /core/admission_status.
 
 std_msgs/Header header
 
@@ -13,6 +14,8 @@ float32  inference_latency_ms       # mean processing latency, per Statistical T
 float32  end_to_end_latency_ms
 float32  sampling_interval_s        # current FOV / ground_speed result
 float32  fov_footprint_m
+uint32   admitted_frames            # cumulative admitted detection sets
+float32  shed_rate                  # admissions dropped under downstream pressure, 0..1
 
 float32  master_cpu_pct
 float32  master_temp_c

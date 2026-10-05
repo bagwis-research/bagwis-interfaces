@@ -62,6 +62,14 @@ topics:
 
   # --- Layer 2: perception (SRS-00 SS3.1) ---
 
+  - const: AI_DETECTIONS_RAW
+    name: /ai/detections_raw
+    type: vision_msgs/msg/Detection2DArray
+    publisher: yolo26n_inference_node
+    subscribers: [dynamic_sampling_node]
+    qos: sensor_data
+    note: every inferred frame, before admission (SRS-00 SS3 internal row; FR-CN-15)
+
   - const: AI_DETECTIONS
     name: /ai/detections
     type: vision_msgs/msg/Detection2DArray
@@ -74,9 +82,17 @@ topics:
     name: /ai/ndvi
     type: bagwis_interfaces/msg/NdviResult
     publisher: ndvi_computation_node
-    subscribers: [georeferencing_node]
+    subscribers: [georeferencing_node, dynamic_sampling_node]
     qos: default
     note: C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
+
+  - const: CORE_ADMISSION_STATUS
+    name: /core/admission_status
+    type: bagwis_interfaces/msg/AdmissionStatus
+    publisher: dynamic_sampling_node
+    subscribers: [health_node]
+    qos: default
+    note: NEW -- not in SRS-00 SS3; FR-CN-07, FR-CN-09. health_node copies it to SystemHealth
 
   # --- Layer 1: MAVROS telemetry (SRS-00 SS3.1, SS3.2) ---
 
@@ -84,7 +100,7 @@ topics:
     name: /mavros/global_position/global
     type: sensor_msgs/msg/NavSatFix
     publisher: mavros_node
-    subscribers: [georeferencing_node]
+    subscribers: [georeferencing_node, dynamic_sampling_node]
     qos: sensor_data
 
   - const: MAVROS_REL_ALT

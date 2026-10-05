@@ -24,6 +24,10 @@ export interface SystemHealth {
   /** current FOV / ground_speed result */
   sampling_interval_s: number;
   fov_footprint_m: number;
+  /** cumulative admitted detection sets */
+  admitted_frames: number;
+  /** admissions dropped under downstream pressure, 0..1 */
+  shed_rate: number;
   master_cpu_pct: number;
   master_temp_c: number;
   slave_cpu_pct: number;

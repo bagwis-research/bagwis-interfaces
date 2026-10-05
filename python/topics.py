@@ -27,6 +27,10 @@ CAMERA_IMAGE_PROCESSED = '/camera/image_processed'
 #: sensor_msgs/msg/CameraInfo
 CAMERA_INFO = '/camera/camera_info'
 
+# every inferred frame, before admission (SRS-00 SS3 internal row; FR-CN-15)
+#: vision_msgs/msg/Detection2DArray
+AI_DETECTIONS_RAW = '/ai/detections_raw'
+
 # C-17 -- the diagram writes Detection2dArray; the ROS type is Detection2DArray
 #: vision_msgs/msg/Detection2DArray
 AI_DETECTIONS = '/ai/detections'
@@ -34,6 +38,10 @@ AI_DETECTIONS = '/ai/detections'
 # C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
 #: bagwis_interfaces/msg/NdviResult
 AI_NDVI = '/ai/ndvi'
+
+# NEW -- not in SRS-00 SS3; FR-CN-07, FR-CN-09. health_node copies it to SystemHealth
+#: bagwis_interfaces/msg/AdmissionStatus
+CORE_ADMISSION_STATUS = '/core/admission_status'
 
 #: sensor_msgs/msg/NavSatFix
 MAVROS_GLOBAL_POSITION = '/mavros/global_position/global'
@@ -120,6 +128,13 @@ TOPICS = {
         'subscribers': ['georeferencing_node'],
         'qos': 'default',
     },
+    'AI_DETECTIONS_RAW': {
+        'name': '/ai/detections_raw',
+        'type': 'vision_msgs/msg/Detection2DArray',
+        'publisher': 'yolo26n_inference_node',
+        'subscribers': ['dynamic_sampling_node'],
+        'qos': 'sensor_data',
+    },
     'AI_DETECTIONS': {
         'name': '/ai/detections',
         'type': 'vision_msgs/msg/Detection2DArray',
@@ -131,14 +146,21 @@ TOPICS = {
         'name': '/ai/ndvi',
         'type': 'bagwis_interfaces/msg/NdviResult',
         'publisher': 'ndvi_computation_node',
-        'subscribers': ['georeferencing_node'],
+        'subscribers': ['georeferencing_node', 'dynamic_sampling_node'],
+        'qos': 'default',
+    },
+    'CORE_ADMISSION_STATUS': {
+        'name': '/core/admission_status',
+        'type': 'bagwis_interfaces/msg/AdmissionStatus',
+        'publisher': 'dynamic_sampling_node',
+        'subscribers': ['health_node'],
         'qos': 'default',
     },
     'MAVROS_GLOBAL_POSITION': {
         'name': '/mavros/global_position/global',
         'type': 'sensor_msgs/msg/NavSatFix',
         'publisher': 'mavros_node',
-        'subscribers': ['georeferencing_node'],
+        'subscribers': ['georeferencing_node', 'dynamic_sampling_node'],
         'qos': 'sensor_data',
     },
     'MAVROS_REL_ALT': {

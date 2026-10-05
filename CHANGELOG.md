@@ -15,6 +15,34 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [0.2.0] — 2026-10-05
+
+Field and message additions for `dynamic_sampling_node` (F3.1). Minor bump
+under FR-IF-04/05: nothing is renamed or removed.
+
+### Added
+
+- `AI_DETECTIONS_RAW` = `/ai/detections_raw`, `vision_msgs/msg/Detection2DArray`,
+  `yolo26n_inference_node` → `dynamic_sampling_node`. SRS-00 §3 listed this
+  link as "(internal)" with no name, so the sampler had nothing to subscribe to.
+- `msg/AdmissionStatus.msg` on `CORE_ADMISSION_STATUS` = `/core/admission_status`:
+  admission interval, footprint, admitted and shed counts, shed rate, and one
+  counter per rejection reason (FR-CN-07, FR-CN-08, FR-CN-09). Published by
+  `dynamic_sampling_node`, read by `health_node`.
+- `SystemHealth.admitted_frames` (`uint32`) and `SystemHealth.shed_rate`
+  (`float32`), which FR-CN-07 and FR-CN-09 require on the operator display.
+- Registry subscribers: `dynamic_sampling_node` on `MAVROS_GLOBAL_POSITION`
+  (displacement and fix status) and on `AI_NDVI` (downstream acknowledgement
+  for shedding).
+
+### Consumers
+
+`bagwis-core` re-pins to `v0.2.0` for the sampler. `bagwis-airborne` and
+`bagwis-web` need no code change; `bagwis-web` gains the two `SystemHealth`
+fields in its generated types when it re-pins.
+
+---
+
 ## [0.1.1] — 2026-09-27
 
 Target distro moves from ROS 2 Humble to ROS 2 Jazzy. No `msg/` or `srv/`
