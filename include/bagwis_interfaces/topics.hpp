@@ -45,6 +45,14 @@ inline constexpr char AI_NDVI[] = "/ai/ndvi";
 /// Type: bagwis_interfaces/msg/AdmissionStatus
 inline constexpr char CORE_ADMISSION_STATUS[] = "/core/admission_status";
 
+/// NEW -- one per admitted detection; recorded as the G3 lat/lon evidence (FR-CN-31)
+/// Type: bagwis_interfaces/msg/GeoDetection
+inline constexpr char CORE_GEO_DETECTIONS[] = "/core/geo_detections";
+
+/// NEW -- not in SRS-00 SS3; FR-CN-28 unmatched-set counters, cluster count
+/// Type: bagwis_interfaces/msg/GeoreferencingStatus
+inline constexpr char CORE_GEOREFERENCING_STATUS[] = "/core/georeferencing_status";
+
 /// Type: sensor_msgs/msg/NavSatFix
 inline constexpr char MAVROS_GLOBAL_POSITION[] = "/mavros/global_position/global";
 

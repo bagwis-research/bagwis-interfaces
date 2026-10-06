@@ -94,6 +94,22 @@ topics:
     qos: default
     note: NEW -- not in SRS-00 SS3; FR-CN-07, FR-CN-09. health_node copies it to SystemHealth
 
+  - const: CORE_GEO_DETECTIONS
+    name: /core/geo_detections
+    type: bagwis_interfaces/msg/GeoDetection
+    publisher: georeferencing_node
+    subscribers: []
+    qos: default
+    note: NEW -- one per admitted detection; recorded as the G3 lat/lon evidence (FR-CN-31)
+
+  - const: CORE_GEOREFERENCING_STATUS
+    name: /core/georeferencing_status
+    type: bagwis_interfaces/msg/GeoreferencingStatus
+    publisher: georeferencing_node
+    subscribers: [health_node]
+    qos: default
+    note: NEW -- not in SRS-00 SS3; FR-CN-28 unmatched-set counters, cluster count
+
   # --- Layer 1: MAVROS telemetry (SRS-00 SS3.1, SS3.2) ---
 
   - const: MAVROS_GLOBAL_POSITION

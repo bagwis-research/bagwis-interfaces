@@ -43,6 +43,14 @@ AI_NDVI = '/ai/ndvi'
 #: bagwis_interfaces/msg/AdmissionStatus
 CORE_ADMISSION_STATUS = '/core/admission_status'
 
+# NEW -- one per admitted detection; recorded as the G3 lat/lon evidence (FR-CN-31)
+#: bagwis_interfaces/msg/GeoDetection
+CORE_GEO_DETECTIONS = '/core/geo_detections'
+
+# NEW -- not in SRS-00 SS3; FR-CN-28 unmatched-set counters, cluster count
+#: bagwis_interfaces/msg/GeoreferencingStatus
+CORE_GEOREFERENCING_STATUS = '/core/georeferencing_status'
+
 #: sensor_msgs/msg/NavSatFix
 MAVROS_GLOBAL_POSITION = '/mavros/global_position/global'
 
@@ -153,6 +161,20 @@ TOPICS = {
         'name': '/core/admission_status',
         'type': 'bagwis_interfaces/msg/AdmissionStatus',
         'publisher': 'dynamic_sampling_node',
+        'subscribers': ['health_node'],
+        'qos': 'default',
+    },
+    'CORE_GEO_DETECTIONS': {
+        'name': '/core/geo_detections',
+        'type': 'bagwis_interfaces/msg/GeoDetection',
+        'publisher': 'georeferencing_node',
+        'subscribers': [],
+        'qos': 'default',
+    },
+    'CORE_GEOREFERENCING_STATUS': {
+        'name': '/core/georeferencing_status',
+        'type': 'bagwis_interfaces/msg/GeoreferencingStatus',
+        'publisher': 'georeferencing_node',
         'subscribers': ['health_node'],
         'qos': 'default',
     },

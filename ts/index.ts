@@ -13,6 +13,7 @@ export * from "./msg/AnalyticsAssumptions";
 export * from "./msg/FinalMetrics";
 export * from "./msg/FlightParams";
 export * from "./msg/GeoDetection";
+export * from "./msg/GeoreferencingStatus";
 export * from "./msg/NdviResult";
 export * from "./msg/ObstructionCluster";
 export * from "./msg/SafetyAlert";

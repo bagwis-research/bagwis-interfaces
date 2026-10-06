@@ -23,6 +23,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/FinalMetrics.msg"
   "msg/FlightParams.msg"
   "msg/GeoDetection.msg"
+  "msg/GeoreferencingStatus.msg"
   "msg/NdviResult.msg"
   "msg/ObstructionCluster.msg"
   "msg/SafetyAlert.msg"

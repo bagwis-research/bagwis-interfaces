@@ -15,6 +15,29 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [0.3.0] — 2026-10-06
+
+Additions for `georeferencing_node` (bagwis-core F3.5). Minor bump under
+FR-IF-04/05: nothing is renamed or removed.
+
+### Added
+
+- `CORE_GEO_DETECTIONS` = `/core/geo_detections`, `GeoDetection`, published by
+  `georeferencing_node`, one message per admitted detection. `GeoDetection`
+  was specified in SRS-00 §4.2 with no topic; publishing it makes "detections
+  resolve to lat/lon" (G3) checkable from a recording.
+- `msg/GeoreferencingStatus.msg` on `CORE_GEOREFERENCING_STATUS` =
+  `/core/georeferencing_status`: frames and detections georeferenced, unmatched
+  detection sets and NDVI results (FR-CN-28), telemetry rejections by reason,
+  and the registry's cluster count. Read by `health_node`.
+
+### Consumers
+
+`bagwis-core` re-pins to `v0.3.0`. `bagwis-airborne` and `bagwis-web` need no
+change.
+
+---
+
 ## [0.2.0] — 2026-10-05
 
 Field and message additions for `dynamic_sampling_node` (F3.1). Minor bump

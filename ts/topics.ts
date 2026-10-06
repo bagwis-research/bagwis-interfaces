@@ -37,6 +37,14 @@ export const AI_NDVI = "/ai/ndvi" as const;
 /** Type: `bagwis_interfaces/msg/AdmissionStatus` */
 export const CORE_ADMISSION_STATUS = "/core/admission_status" as const;
 
+/** NEW -- one per admitted detection; recorded as the G3 lat/lon evidence (FR-CN-31) */
+/** Type: `bagwis_interfaces/msg/GeoDetection` */
+export const CORE_GEO_DETECTIONS = "/core/geo_detections" as const;
+
+/** NEW -- not in SRS-00 SS3; FR-CN-28 unmatched-set counters, cluster count */
+/** Type: `bagwis_interfaces/msg/GeoreferencingStatus` */
+export const CORE_GEOREFERENCING_STATUS = "/core/georeferencing_status" as const;
+
 /** Type: `sensor_msgs/msg/NavSatFix` */
 export const MAVROS_GLOBAL_POSITION = "/mavros/global_position/global" as const;
 
@@ -98,6 +106,8 @@ export const ALL_TOPICS = [
   AI_DETECTIONS,
   AI_NDVI,
   CORE_ADMISSION_STATUS,
+  CORE_GEO_DETECTIONS,
+  CORE_GEOREFERENCING_STATUS,
   MAVROS_GLOBAL_POSITION,
   MAVROS_REL_ALT,
   MAVROS_VELOCITY_LOCAL,
