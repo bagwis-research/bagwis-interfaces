@@ -15,6 +15,81 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [1.0.0-rc.1] — 2026-10-08
+
+Breaking F3.6 shared contract. ROS and npm package versions are both **1.0.0**;
+the immutable coordinated testing tag is **`v1.0.0-rc.1`**, not stable release.
+Dependency: [draft PR #5](https://github.com/bagwis-research/bagwis-interfaces/pull/5),
+with both JoshuaHM-p4 and EarlClydeeee required as contract reviewers.
+
+### Breaking changes
+
+- `AI_DETECTIONS_RAW` and `AI_DETECTIONS` retain topic names/QoS but replace
+  Detection2DArray with atomic `SegmentedDetectionArray`: full image dimensions,
+  capture header, primitive class/confidence/box fields and canonical lossless
+  row-major foreground `[start,length,...]` runs. Positive, sorted, disjoint,
+  row-contained/coalesced runs are mandatory for every nonempty detection.
+  Producers undo letterboxing on masks and boxes and select the best class.
+  Valid empty frames remain valid; invalid/missing masks reject the frame.
+  No old-message shim or separate mask topic is provided; old bags must be
+  regenerated.
+- Removed `NdviResult.mask_pixel_count`. Segmentation count comes only from run
+  lengths; NDVI retains index-aligned values/availability. Absent NIR leaves
+  NDVI NaN, not area/biomass unavailable when class-0 masks are measured.
+- `FinalMetrics.kde_lat` and `kde_lon` change from float32 to float64 to retain
+  WGS84 precision.
+
+### Added and clarified
+
+- Equal-length sorted per-class area arrays in FinalMetrics/ObstructionCluster.
+  Areas are exact spatial mask unions, not box/hull areas or observation sums.
+  Class 0 supplies hyacinth biomass/RWOR; classes 1–4 supply waste
+  volume/fractional truck equivalents. Mixed clusters use relevant layers;
+  unknown 255 remains visible but is excluded from those named buckets.
+  `is_organic` denotes dominant class 0; wood gets no wet biomass.
+  Applicable incomplete metrics are NaN, non-applicable metrics zero.
+- AnalyticsAssumptions adds RWOR alert threshold, profile source/revision,
+  corrected added launch offset and policy/provenance disclosures.
+- GeoreferencingStatus adds `rejected_invalid_mask`.
+- `ExportBiomassSample` and registered `BIOMASS_EXPORT` service:
+  caller-supplied exact capture/harvest location/radius, optional actual kg/m²,
+  explicit success/error/CSV response. Core persists idempotent paired records
+  and separates predicted kg/m² from predicted total kg; no fabricated
+  harvest measurements or calibration UI are implied.
+- Registry now includes the raw-frame counting subscription of
+  georeferencing_node, the biomass export server and both actual dashboard
+  publishers. README documents canonical runs and all affected metric semantics.
+
+### Consumers and release order
+
+All affected consumers — **bagwis-core, bagwis-web, bagwis-airborne** — pin
+`v1.0.0-rc.1`. Core migrates admission/NDVI/georeferencing and synthetic bag
+production together. Web/airborne require pin/generated-type consistency;
+this release does not add a dashboard calibration UI or perception producer.
+Both owners must approve and merge the interfaces contract before publishing
+stable `v1.0.0`, followed by coordinated consumer stable pin updates.
+No automatic merge, stable tag or ownership/gate change is authorized.
+
+### Exercised evidence
+
+- Generator check passed for 21 outputs; npm generated-type verification passed.
+- Actual Jazzy build and generated ROS interface inspection confirmed the new
+  detection/metric/service shapes and removal of the NDVI count field.
+- rc.1 consumer compilation: web dependency install/typecheck passed; web test
+  command exited 1 (“No test files found”), with no existing behavioral suite.
+  Separate airborne Jazzy build: six packages, 38 tests, zero errors/failures,
+  two skipped. Core pinned-submodule build: two packages, 631 tests,
+  zero errors/failures, six skipped.
+- Atomic Jazzy golden replay, same-mission restart and independent mission passed:
+  recorded metrics/latched assumptions, 400 raw/10 admitted/10 NDVI frames and
+  deduplicated class totals. Real M1 export service and offline CLI agreed on
+  40 kg/m², 36 m² and 1,440 kg, blank unavailable measurements, idempotency and
+  conflict/far-location rejection. Host reports: `/tmp/bagwis_f3_6`.
+- Software/wire evidence is not field accuracy or harvested biomass validation.
+
+---
+
+
 ## [0.3.0] — 2026-10-06
 
 Additions for `georeferencing_node` (bagwis-core F3.5). Minor bump under
