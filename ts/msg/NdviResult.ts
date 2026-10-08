@@ -18,8 +18,6 @@ export interface NdviResult {
   vegetation_pixel_count: number;
   /** per-instance mean NDVI, index-aligned to detections */
   mask_ndvi: number[];
-  /** per-instance Px, index-aligned to detections */
-  mask_pixel_count: number[];
   /** false -> all NDVI fields are meaningless */
   nir_available: boolean;
   /** homography state: ok | degraded | unavailable */

@@ -29,12 +29,12 @@ inline constexpr char CAMERA_IMAGE_PROCESSED[] = "/camera/image_processed";
 /// Type: sensor_msgs/msg/CameraInfo
 inline constexpr char CAMERA_INFO[] = "/camera/camera_info";
 
-/// every inferred frame, before admission (SRS-00 SS3 internal row; FR-CN-15)
-/// Type: vision_msgs/msg/Detection2DArray
+/// every inferred frame before admission; georeferencing counts unique capture stamps only
+/// Type: bagwis_interfaces/msg/SegmentedDetectionArray
 inline constexpr char AI_DETECTIONS_RAW[] = "/ai/detections_raw";
 
-/// C-17 -- the diagram writes Detection2dArray; the ROS type is Detection2DArray
-/// Type: vision_msgs/msg/Detection2DArray
+/// atomic admitted segmentation with lossless masks; incompatible with Detection2DArray
+/// Type: bagwis_interfaces/msg/SegmentedDetectionArray
 inline constexpr char AI_DETECTIONS[] = "/ai/detections";
 
 /// C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
@@ -108,6 +108,9 @@ inline constexpr char MISSION_STOP[] = "/mission/stop";
 
 /// Type: bagwis_interfaces/srv/GetMissionState
 inline constexpr char MISSION_STATE[] = "/mission/state";
+
+/// Type: bagwis_interfaces/srv/ExportBiomassSample
+inline constexpr char BIOMASS_EXPORT[] = "/analytics/export_biomass_sample";
 
 }  // namespace services
 }  // namespace bagwis

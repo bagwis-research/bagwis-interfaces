@@ -64,19 +64,19 @@ topics:
 
   - const: AI_DETECTIONS_RAW
     name: /ai/detections_raw
-    type: vision_msgs/msg/Detection2DArray
+    type: bagwis_interfaces/msg/SegmentedDetectionArray
     publisher: yolo26n_inference_node
-    subscribers: [dynamic_sampling_node]
+    subscribers: [dynamic_sampling_node, georeferencing_node]
     qos: sensor_data
-    note: every inferred frame, before admission (SRS-00 SS3 internal row; FR-CN-15)
+    note: every inferred frame before admission; georeferencing counts unique capture stamps only
 
   - const: AI_DETECTIONS
     name: /ai/detections
-    type: vision_msgs/msg/Detection2DArray
+    type: bagwis_interfaces/msg/SegmentedDetectionArray
     publisher: dynamic_sampling_node
     subscribers: [georeferencing_node, ndvi_computation_node]
     qos: default
-    note: C-17 -- the diagram writes Detection2dArray; the ROS type is Detection2DArray
+    note: atomic admitted segmentation with lossless masks; incompatible with Detection2DArray
 
   - const: AI_NDVI
     name: /ai/ndvi
@@ -216,3 +216,8 @@ services:
     name: /mission/state
     type: bagwis_interfaces/srv/GetMissionState
     server: rosbridge_websocket_node
+
+  - const: BIOMASS_EXPORT
+    name: /analytics/export_biomass_sample
+    type: bagwis_interfaces/srv/ExportBiomassSample
+    server: georeferencing_node

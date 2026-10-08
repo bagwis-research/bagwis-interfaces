@@ -21,12 +21,12 @@ export const CAMERA_IMAGE_PROCESSED = "/camera/image_processed" as const;
 /** Type: `sensor_msgs/msg/CameraInfo` */
 export const CAMERA_INFO = "/camera/camera_info" as const;
 
-/** every inferred frame, before admission (SRS-00 SS3 internal row; FR-CN-15) */
-/** Type: `vision_msgs/msg/Detection2DArray` */
+/** every inferred frame before admission; georeferencing counts unique capture stamps only */
+/** Type: `bagwis_interfaces/msg/SegmentedDetectionArray` */
 export const AI_DETECTIONS_RAW = "/ai/detections_raw" as const;
 
-/** C-17 -- the diagram writes Detection2dArray; the ROS type is Detection2DArray */
-/** Type: `vision_msgs/msg/Detection2DArray` */
+/** atomic admitted segmentation with lossless masks; incompatible with Detection2DArray */
+/** Type: `bagwis_interfaces/msg/SegmentedDetectionArray` */
 export const AI_DETECTIONS = "/ai/detections" as const;
 
 /** C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. */
@@ -95,6 +95,9 @@ export const MISSION_STOP = "/mission/stop" as const;
 
 /** Type: `bagwis_interfaces/srv/GetMissionState` */
 export const MISSION_STATE = "/mission/state" as const;
+
+/** Type: `bagwis_interfaces/srv/ExportBiomassSample` */
+export const BIOMASS_EXPORT = "/analytics/export_biomass_sample" as const;
 
 /** Every topic name, for exhaustiveness checks and the mock harness. */
 export const ALL_TOPICS = [

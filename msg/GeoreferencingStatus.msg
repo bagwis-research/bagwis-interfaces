@@ -14,4 +14,5 @@ uint32   unmatched_detections       # admitted sets /ai/ndvi never answered
 uint32   unmatched_ndvi             # NDVI results with no detection set
 uint32   rejected_no_fix
 uint32   rejected_stale_telemetry   # including frames with no telemetry at all
+uint32   rejected_invalid_mask      # malformed atomic segmentation frames
 uint32   clusters                   # obstruction clusters in the mission registry
