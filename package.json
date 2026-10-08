@@ -1,6 +1,6 @@
 {
   "name": "@bagwis/interfaces",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "description": "Generated TypeScript topic constants and ROS 2 message shapes for the BAGWIS dashboard (FR-IF-03, FR-IF-06).",
   "types": "ts/index.ts",

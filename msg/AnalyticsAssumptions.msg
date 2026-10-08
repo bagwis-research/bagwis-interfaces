@@ -15,7 +15,13 @@ float32  truck_capacity_m3          # V_truck,    default 6.0
 float32  hyacinth_density_kg_m2     # W_density,  default 40.0
 float32  confidence_threshold
 float32  kde_bandwidth_m
+float32  rwor_alert_threshold_pct    # alert strictly above this percentage
 float32  vegetation_ndvi_threshold
-float32  launch_to_water_offset_m   # subtracted from barometric relative altitude
+float32  launch_to_water_offset_m   # added to barometric relative altitude
 string   model_version              # artifact bundle tag
+string   river_profile_source       # actual measurement/source description
+string   river_profile_revision     # actual survey/data revision
+# Discloses cited uncalibrated empirical constants, mask-union deduplication,
+# static targets, NIR-independent area-derived biomass, fractional truck
+# equivalents and actual KDE grid spacing.
 string   citation_note

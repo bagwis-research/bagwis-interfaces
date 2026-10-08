@@ -16,7 +16,13 @@ export interface FinalMetrics {
   segment_name: string;
   /** metric cards, one per choke-point */
   clusters: ObstructionCluster[];
+  /** sorted observed IDs, including 255; aligned with class_area_m2 */
+  class_ids: number[];
+  /** per-class spatial union across clusters */
+  class_area_m2: number[];
+  /** class-0 union across clusters */
   total_hyacinth_area_m2: number;
+  /** classes 1-4 union across clusters; excludes unknown 255 */
   total_waste_area_m2: number;
   total_volume_m3: number;
   total_truck_loads: number;

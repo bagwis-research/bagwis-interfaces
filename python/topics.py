@@ -27,12 +27,12 @@ CAMERA_IMAGE_PROCESSED = '/camera/image_processed'
 #: sensor_msgs/msg/CameraInfo
 CAMERA_INFO = '/camera/camera_info'
 
-# every inferred frame, before admission (SRS-00 SS3 internal row; FR-CN-15)
-#: vision_msgs/msg/Detection2DArray
+# every inferred frame before admission; georeferencing counts unique capture stamps only
+#: bagwis_interfaces/msg/SegmentedDetectionArray
 AI_DETECTIONS_RAW = '/ai/detections_raw'
 
-# C-17 -- the diagram writes Detection2dArray; the ROS type is Detection2DArray
-#: vision_msgs/msg/Detection2DArray
+# atomic admitted segmentation with lossless masks; incompatible with Detection2DArray
+#: bagwis_interfaces/msg/SegmentedDetectionArray
 AI_DETECTIONS = '/ai/detections'
 
 # C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
@@ -104,6 +104,9 @@ MISSION_STOP = '/mission/stop'
 #: bagwis_interfaces/srv/GetMissionState
 MISSION_STATE = '/mission/state'
 
+#: bagwis_interfaces/srv/ExportBiomassSample
+BIOMASS_EXPORT = '/analytics/export_biomass_sample'
+
 # Machine-readable form, consumed by the startup graph-conformance check
 # (FR-CN-63), which compares `ros2 topic list` against these entries and
 # fails loudly on a mismatch rather than presenting as a dead sensor.
@@ -138,14 +141,14 @@ TOPICS = {
     },
     'AI_DETECTIONS_RAW': {
         'name': '/ai/detections_raw',
-        'type': 'vision_msgs/msg/Detection2DArray',
+        'type': 'bagwis_interfaces/msg/SegmentedDetectionArray',
         'publisher': 'yolo26n_inference_node',
-        'subscribers': ['dynamic_sampling_node'],
+        'subscribers': ['dynamic_sampling_node', 'georeferencing_node'],
         'qos': 'sensor_data',
     },
     'AI_DETECTIONS': {
         'name': '/ai/detections',
-        'type': 'vision_msgs/msg/Detection2DArray',
+        'type': 'bagwis_interfaces/msg/SegmentedDetectionArray',
         'publisher': 'dynamic_sampling_node',
         'subscribers': ['georeferencing_node', 'ndvi_computation_node'],
         'qos': 'default',
@@ -272,5 +275,10 @@ SERVICES = {
         'name': '/mission/state',
         'type': 'bagwis_interfaces/srv/GetMissionState',
         'server': 'rosbridge_websocket_node',
+    },
+    'BIOMASS_EXPORT': {
+        'name': '/analytics/export_biomass_sample',
+        'type': 'bagwis_interfaces/srv/ExportBiomassSample',
+        'server': 'georeferencing_node',
     },
 }

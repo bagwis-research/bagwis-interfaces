@@ -20,6 +20,8 @@ export interface GeoreferencingStatus {
   rejected_no_fix: number;
   /** including frames with no telemetry at all */
   rejected_stale_telemetry: number;
+  /** malformed atomic segmentation frames */
+  rejected_invalid_mask: number;
   /** obstruction clusters in the mission registry */
   clusters: number;
 }

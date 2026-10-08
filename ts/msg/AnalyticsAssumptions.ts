@@ -18,10 +18,16 @@ export interface AnalyticsAssumptions {
   hyacinth_density_kg_m2: number;
   confidence_threshold: number;
   kde_bandwidth_m: number;
+  /** alert strictly above this percentage */
+  rwor_alert_threshold_pct: number;
   vegetation_ndvi_threshold: number;
-  /** subtracted from barometric relative altitude */
+  /** added to barometric relative altitude */
   launch_to_water_offset_m: number;
   /** artifact bundle tag */
   model_version: string;
+  /** actual measurement/source description */
+  river_profile_source: string;
+  /** actual survey/data revision */
+  river_profile_revision: string;
   citation_note: string;
 }

@@ -1,0 +1,14 @@
+# Caller supplies an actual harvest location, exact capture time and radius.
+# Reject empty sample IDs, invalid coordinates/nonpositive or nonfinite radius,
+# and nonfinite/negative actual_kg_m2 when actual_available is true.
+# Exact-stamp class-0 matching only; no fabricated control measurement.
+string sample_id
+builtin_interfaces/Time capture_stamp
+geographic_msgs/GeoPoint location
+float64 match_radius_m
+bool actual_available
+float64 actual_kg_m2
+---
+bool success
+string message
+string csv_path

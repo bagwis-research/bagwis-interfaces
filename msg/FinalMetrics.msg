@@ -10,9 +10,11 @@ string   mission_id
 string   segment_name               # "Tumana Bridge" | "Marikina Bridge"
 
 ObstructionCluster[] clusters       # metric cards, one per choke-point
+uint8[]   class_ids                 # sorted observed IDs, including 255; aligned with class_area_m2
+float64[] class_area_m2             # per-class spatial union across clusters
 
-float32  total_hyacinth_area_m2
-float32  total_waste_area_m2
+float32  total_hyacinth_area_m2      # class-0 union across clusters
+float32  total_waste_area_m2         # classes 1-4 union across clusters; excludes unknown 255
 float32  total_volume_m3
 float32  total_truck_loads
 float32  total_wet_biomass_kg
@@ -22,8 +24,8 @@ bool     rwor_alert_active          # flood early warning for MCDRRMO
 
 # KDE surface for leaflet-heat: [lat, lon, weight] triples.
 # The three arrays are index-aligned and must be of equal length.
-float32[] kde_lat
-float32[] kde_lon
+float64[] kde_lat
+float64[] kde_lon
 float32[] kde_weight
 
 float32  segment_covered_m
