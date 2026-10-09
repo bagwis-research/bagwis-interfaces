@@ -98,15 +98,16 @@ them would force those apt packages onto every machine that builds this one,
 the Pi Zero 2 W included, for a dependency nothing uses. Their types are
 recorded in `topics/registry.yaml`; each consumer declares what it subscribes to.
 
-## F3.6 breaking contract: 1.0.0 / v1.0.0-rc.1
+## F3.6 stable contract: v1.0.0
 
-ROS and npm package versions are **1.0.0**; coordinated core/web/airborne
-consumers pin **`v1.0.0-rc.1`**. The contract is in
-[draft PR #5](https://github.com/bagwis-research/bagwis-interfaces/pull/5),
-requiring both Joshua (`JoshuaHM-p4`) and Earl Clyde (`EarlClydeeee`) to review.
-Interfaces approval/merge and stable `v1.0.0` publication must precede consumer
-stable pin updates. Neither this prerelease nor a consumer PR is approval to
-merge, publish stable tags or mark field gates complete.
+ROS and npm package versions are **1.0.0**. The stable
+[`v1.0.0` release](https://github.com/bagwis-research/bagwis-interfaces/releases/tag/v1.0.0)
+is published from merged [PR #5](https://github.com/bagwis-research/bagwis-interfaces/pull/5).
+Core, web and airborne have coordinated stable-pin updates after this
+interfaces-first publication. The tested `v1.0.0-rc.1` tag remains immutable;
+the stable wire contract and generated code are unchanged from the prerelease.
+The TypeScript package is private and consumed through the Git submodule, not
+published to npm. Stable publication does not mark roadmap or field gates complete.
 
 ### Atomic segmented detections
 
