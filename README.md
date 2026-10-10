@@ -92,11 +92,35 @@ npm install && npm run verify     # generate.py --check && tsc --noEmit
 Declared: `std_msgs`, `geographic_msgs`, `builtin_interfaces` — the only
 packages whose types appear in a field.
 
-Not declared: `sensor_msgs`, `vision_msgs`, `geometry_msgs`, `mavros_msgs`.
-They appear in the SRS-00 §3 topic table but in no field here, so depending on
-them would force those apt packages onto every machine that builds this one,
-the Pi Zero 2 W included, for a dependency nothing uses. Their types are
-recorded in `topics/registry.yaml`; each consumer declares what it subscribes to.
+Not declared: `sensor_msgs`, `vision_msgs`, `geometry_msgs`, `mavros_msgs`,
+`rosbridge_msgs`. They appear in the SRS-00 §3 topic table or the registry but
+in no field here, so depending on them would force those apt packages onto
+every machine that builds this one, the Pi Zero 2 W included, for a dependency
+nothing uses. Their types are recorded in `topics/registry.yaml`; each
+consumer declares what it subscribes to.
+
+## F3.8 additive hosting contract: 1.1.0 / v1.1.0-rc.2
+
+ROS and npm package versions are **1.1.0**. The contract is merged to `main`
+(PRs #8, #9 and #7); the F3.8 core/web consumers pin the immutable prerelease
+**`v1.1.0-rc.2`** (`rc.1` predates the `image_stream` QoS class and stays
+immutable). Stable `v1.1.0` is published only after both owners approve;
+main-branch consumers stay on `v1.0.0` until then. Nothing from 1.0.0 is
+renamed or retyped. `image_stream` re-classes the QoS of four frame topics
+(BEST_EFFORT, KEEP_LAST 1); consumers must map it. The additions (see
+`CHANGELOG.md`):
+
+- `SystemHealth.BACKEND_UNKNOWN=255` and the unavailable-measurement
+  convention (NaN / unknown constant / `active_warnings` → JSON `null` over
+  rosbridge).
+- `BRIDGE_CLIENT_COUNT` and `BRIDGE_CONNECTED_CLIENTS`, the upstream
+  rosbridge ClientManager publications the composed bridge node emits.
+- `rosbridge_websocket_node` subscriptions to the MJPEG compositor inputs
+  (`CAMERA_IMAGE_RAW_COMPRESSED`, `CAMERA_INFO`, `AI_DETECTIONS_RAW`).
+- `health_node` subscriptions to its actual measurement sources.
+
+Mission service names, request/response shapes and ownership
+(`rosbridge_websocket_node`) are unchanged.
 
 ## F3.6 stable contract: v1.0.0
 

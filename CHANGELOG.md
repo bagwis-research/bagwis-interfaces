@@ -15,6 +15,81 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [1.1.0-rc.2] — 2026-10-10
+
+Registry-only change on top of 1.1.0-rc.1: the QoS class of four frame topics.
+No `msg/` or `srv/` file moves, so the wire format is identical. It joins the
+unreleased 1.1.0 line (main is already 1.1.0; a 1.0.1 would be lower than the
+current version), so the next immutable testing tag is `v1.1.0-rc.2` and
+stable `v1.1.0` carries both. Consumers must map the new class before
+re-pinning (bagwis-core PR "feat(qos)").
+
+### Changed
+
+- New QoS class `image_stream` (BEST_EFFORT, KEEP_LAST 1) for
+  `CAMERA_IMAGE_RAW`, `CAMERA_IMAGE_RAW_COMPRESSED`, `CAMERA_IMAGE_PROCESSED`
+  and `AI_DETECTIONS_RAW`, which were `sensor_data` (KEEP_LAST 5). A frame or
+  a per-frame inference result that is already stale is worth less than the
+  next one, and a queue deeper than one turns packet loss on the radio link
+  into latency (DD-AN-3). MAVROS telemetry stays `sensor_data`: its short
+  history is what lets a GPS reading taken just before a capture stamp still
+  pair with the frame.
+- The registry header now documents the four QoS classes and the policy each
+  maps to, so a class name is a contract rather than a label.
+
+### Consumers
+
+`bagwis-core` maps `image_stream` in `infrastructure/qos.py` and re-pins to
+pick it up; every core subscriber of these topics (sampling, georeferencing,
+the bridge's MJPEG inputs, `health_node`, `mission_recorder`) reads the class
+through `qos_for`. `bagwis-airborne` has no nodes yet; when `v4l2_camera_node`
+and the `image_transport` publisher land, they read the class from here
+(FR-IF-03). `bagwis-web` subscribes through rosbridge, which does not expose
+DDS QoS, so no change there.
+
+---
+
+## [1.1.0-rc.1] — 2026-10-10
+
+Additive F3.8 hosting contract (minor bump, FR-IF-05). ROS and npm package
+versions are both **1.1.0**; `v1.1.0-rc.1` is the immutable coordinated
+testing tag for the feature branches. Stable `v1.1.0` requires both owners'
+approvals and the merged contract first (README step 4); stable consumers stay
+on `v1.0.0` until then. No field, name, type or QoS of 1.0.0 changes.
+
+### Added
+
+- `SystemHealth.BACKEND_UNKNOWN=255`: the explicit "no trustworthy producer"
+  value of `inference_backend`. `BACKEND_ONNX=0` is a real backend, not a
+  default. Header comment now states the unavailable-measurement convention
+  (NaN / unknown constant / `active_warnings`), which rosbridge carries to the
+  dashboard as JSON `null`.
+- `BRIDGE_CLIENT_COUNT` (`/client_count`, `std_msgs/msg/Int32`) and
+  `BRIDGE_CONNECTED_CLIENTS` (`/connected_clients`,
+  `rosbridge_msgs/msg/ConnectedClients`), transient-local, published by the
+  upstream `rosbridge_server` ClientManager that `rosbridge_websocket_node`
+  composes. Declared so graph conformance expects them; neither is
+  browser-readable. As with every foreign type in the registry, this package
+  does not depend on `rosbridge_msgs`; core declares it.
+- `rosbridge_websocket_node` declared subscriber of
+  `CAMERA_IMAGE_RAW_COMPRESSED`, `CAMERA_INFO` and `AI_DETECTIONS_RAW`: the
+  native inputs of the `/video.mjpeg` compositor (T3.8.3). No new image topic.
+- `health_node` declared subscriber of `CAMERA_IMAGE_RAW_COMPRESSED`
+  (downlink_fps), `AI_DETECTIONS_RAW`, `AI_NDVI` (nir_available),
+  `MAVROS_GLOBAL_POSITION` (link freshness) and `DASHBOARD_SAFETY_ALERTS`
+  (lidar_available), in addition to its 1.0.0 inputs (T3.8.8).
+
+### Consumers and release order
+
+- bagwis-core (F3.8 branch): host, health, recorder and conformance consume
+  the additions; pins `v1.1.0-rc.1` until stable.
+- bagwis-web (F3.8 branch): transport treats `null` numerics as unavailable and
+  compares `inference_backend` against `SystemHealth_BACKEND_UNKNOWN`; pins
+  `v1.1.0-rc.1` until stable.
+- bagwis-airborne: unaffected (no airborne field or topic changed).
+
+---
+
 ## [1.0.0] — 2026-10-09
 
 - Publish immutable stable `v1.0.0` from merged
