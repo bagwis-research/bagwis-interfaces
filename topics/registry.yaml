@@ -22,6 +22,22 @@
 #
 # Format: intentionally a flat subset of YAML so scripts/generate.py can parse
 # it with the standard library alone (no pyyaml on the Pi).
+#
+# `qos` names a class, and consumers map the class to a profile (bagwis-core
+# infrastructure/qos.py). A publisher and a subscriber that disagree on
+# reliability never match, and the subscriber receives nothing -- the same dead
+# sensor as a transposed name -- so both ends read the class from here.
+#   image_stream     BEST_EFFORT, KEEP_LAST 1. Frames and per-frame inference
+#                    output. Over the radio link a retransmitted stale frame is
+#                    worth less than the next one, and any queue deeper than one
+#                    turns packet loss into latency (DD-AN-3).
+#   sensor_data      BEST_EFFORT, KEEP_LAST 5 (the rmw sensor-data profile).
+#                    MAVROS telemetry: a short history, so the GPS sample taken
+#                    just before a frame's capture stamp is still there to pair.
+#   default          RELIABLE, KEEP_LAST 10. Admitted sets, status, metrics and
+#                    commands. Nothing in this class may be dropped silently.
+#   transient_local  RELIABLE, KEEP_LAST 1, latched: a late subscriber still
+#                    receives the last message.
 
 version: 1
 
@@ -34,7 +50,7 @@ topics:
     type: sensor_msgs/msg/Image
     publisher: v4l2_camera_node
     subscribers: []
-    qos: sensor_data
+    qos: image_stream
     note: intra-process only -- never crosses DDS (C-01)
 
   - const: CAMERA_IMAGE_RAW_COMPRESSED
@@ -42,7 +58,7 @@ topics:
     type: sensor_msgs/msg/CompressedImage
     publisher: v4l2_camera_node
     subscribers: [preprocessing_node]
-    qos: sensor_data
+    qos: image_stream
     note: image_transport compressed plugin -- the only video crossing the radio link
 
   - const: CAMERA_IMAGE_PROCESSED
@@ -50,7 +66,7 @@ topics:
     type: sensor_msgs/msg/Image
     publisher: preprocessing_node
     subscribers: [yolo26n_inference_node]
-    qos: sensor_data
+    qos: image_stream
 
   - const: CAMERA_INFO
     name: /camera/camera_info
@@ -67,7 +83,7 @@ topics:
     type: bagwis_interfaces/msg/SegmentedDetectionArray
     publisher: yolo26n_inference_node
     subscribers: [dynamic_sampling_node, georeferencing_node]
-    qos: sensor_data
+    qos: image_stream
     note: every inferred frame before admission; georeferencing counts unique capture stamps only
 
   - const: AI_DETECTIONS
