@@ -15,6 +15,40 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [1.1.0-rc.2] — unreleased
+
+Registry-only change on top of 1.1.0-rc.1: the QoS class of four frame topics.
+No `msg/` or `srv/` file moves, so the wire format is identical. It joins the
+unreleased 1.1.0 line (main is already 1.1.0; a 1.0.1 would be lower than the
+current version), so the next immutable testing tag is `v1.1.0-rc.2` and
+stable `v1.1.0` carries both. Consumers must map the new class before
+re-pinning (bagwis-core PR "feat(qos)").
+
+### Changed
+
+- New QoS class `image_stream` (BEST_EFFORT, KEEP_LAST 1) for
+  `CAMERA_IMAGE_RAW`, `CAMERA_IMAGE_RAW_COMPRESSED`, `CAMERA_IMAGE_PROCESSED`
+  and `AI_DETECTIONS_RAW`, which were `sensor_data` (KEEP_LAST 5). A frame or
+  a per-frame inference result that is already stale is worth less than the
+  next one, and a queue deeper than one turns packet loss on the radio link
+  into latency (DD-AN-3). MAVROS telemetry stays `sensor_data`: its short
+  history is what lets a GPS reading taken just before a capture stamp still
+  pair with the frame.
+- The registry header now documents the four QoS classes and the policy each
+  maps to, so a class name is a contract rather than a label.
+
+### Consumers
+
+`bagwis-core` maps `image_stream` in `infrastructure/qos.py` and re-pins to
+pick it up; every core subscriber of these topics (sampling, georeferencing,
+the bridge's MJPEG inputs, `health_node`, `mission_recorder`) reads the class
+through `qos_for`. `bagwis-airborne` has no nodes yet; when `v4l2_camera_node`
+and the `image_transport` publisher land, they read the class from here
+(FR-IF-03). `bagwis-web` subscribes through rosbridge, which does not expose
+DDS QoS, so no change there.
+
+---
+
 ## [1.1.0-rc.1] — 2026-10-10
 
 Additive F3.8 hosting contract (minor bump, FR-IF-05). ROS and npm package

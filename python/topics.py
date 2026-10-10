@@ -133,21 +133,21 @@ TOPICS = {
         'type': 'sensor_msgs/msg/Image',
         'publisher': 'v4l2_camera_node',
         'subscribers': [],
-        'qos': 'sensor_data',
+        'qos': 'image_stream',
     },
     'CAMERA_IMAGE_RAW_COMPRESSED': {
         'name': '/camera/image_raw/compressed',
         'type': 'sensor_msgs/msg/CompressedImage',
         'publisher': 'v4l2_camera_node',
         'subscribers': ['preprocessing_node', 'rosbridge_websocket_node', 'health_node'],
-        'qos': 'sensor_data',
+        'qos': 'image_stream',
     },
     'CAMERA_IMAGE_PROCESSED': {
         'name': '/camera/image_processed',
         'type': 'sensor_msgs/msg/Image',
         'publisher': 'preprocessing_node',
         'subscribers': ['yolo26n_inference_node'],
-        'qos': 'sensor_data',
+        'qos': 'image_stream',
     },
     'CAMERA_INFO': {
         'name': '/camera/camera_info',
@@ -166,7 +166,7 @@ TOPICS = {
             'rosbridge_websocket_node',
             'health_node',
         ],
-        'qos': 'sensor_data',
+        'qos': 'image_stream',
     },
     'AI_DETECTIONS': {
         'name': '/ai/detections',
