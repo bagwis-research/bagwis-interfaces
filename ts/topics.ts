@@ -21,7 +21,7 @@ export const CAMERA_IMAGE_PROCESSED = "/camera/image_processed" as const;
 /** Type: `sensor_msgs/msg/CameraInfo` */
 export const CAMERA_INFO = "/camera/camera_info" as const;
 
-/** every inferred frame before admission; georeferencing counts unique capture stamps only; rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0) */
+/** every inferred frame before admission; georeferencing counts unique capture stamps only, so a depth-1 queue that drops one burst-delivered set breaks the count (sensor_data keeps history 5); rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0) */
 /** Type: `bagwis_interfaces/msg/SegmentedDetectionArray` */
 export const AI_DETECTIONS_RAW = "/ai/detections_raw" as const;
 
