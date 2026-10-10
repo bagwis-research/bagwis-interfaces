@@ -30,7 +30,8 @@ CAMERA_IMAGE_PROCESSED = '/camera/image_processed'
 #: sensor_msgs/msg/CameraInfo
 CAMERA_INFO = '/camera/camera_info'
 
-# every inferred frame before admission; georeferencing counts unique capture stamps only;
+# every inferred frame before admission; georeferencing counts unique capture stamps only, so a
+# depth-1 queue that drops one burst-delivered set breaks the count (sensor_data keeps history 5);
 # rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures
 # inference receipt (1.1.0)
 #: bagwis_interfaces/msg/SegmentedDetectionArray
@@ -166,7 +167,7 @@ TOPICS = {
             'rosbridge_websocket_node',
             'health_node',
         ],
-        'qos': 'image_stream',
+        'qos': 'sensor_data',
     },
     'AI_DETECTIONS': {
         'name': '/ai/detections',
