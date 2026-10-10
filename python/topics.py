@@ -16,18 +16,23 @@ from __future__ import annotations
 #: sensor_msgs/msg/Image
 CAMERA_IMAGE_RAW = '/camera/image_raw'
 
-# image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0)
+# image_transport compressed plugin -- the only video crossing the radio link.
+# rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps
+# from receipts (1.1.0)
 #: sensor_msgs/msg/CompressedImage
 CAMERA_IMAGE_RAW_COMPRESSED = '/camera/image_raw/compressed'
 
 #: sensor_msgs/msg/Image
 CAMERA_IMAGE_PROCESSED = '/camera/image_processed'
 
-# intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before drawing held overlays (1.1.0)
+# intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before
+# drawing held overlays (1.1.0)
 #: sensor_msgs/msg/CameraInfo
 CAMERA_INFO = '/camera/camera_info'
 
-# every inferred frame before admission; georeferencing counts unique capture stamps only; rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0)
+# every inferred frame before admission; georeferencing counts unique capture stamps only;
+# rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures
+# inference receipt (1.1.0)
 #: bagwis_interfaces/msg/SegmentedDetectionArray
 AI_DETECTIONS_RAW = '/ai/detections_raw'
 
@@ -35,7 +40,8 @@ AI_DETECTIONS_RAW = '/ai/detections_raw'
 #: bagwis_interfaces/msg/SegmentedDetectionArray
 AI_DETECTIONS = '/ai/detections'
 
-# C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. health_node derives nir_available from it (1.1.0)
+# C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. health_node derives
+# nir_available from it (1.1.0)
 #: bagwis_interfaces/msg/NdviResult
 AI_NDVI = '/ai/ndvi'
 
@@ -51,7 +57,8 @@ CORE_GEO_DETECTIONS = '/core/geo_detections'
 #: bagwis_interfaces/msg/GeoreferencingStatus
 CORE_GEOREFERENCING_STATUS = '/core/georeferencing_status'
 
-# health_node measures telemetry receipt age for link_state (1.1.0); NavSatFix carries no satellite count or MAVLink fix type
+# health_node measures telemetry receipt age for link_state (1.1.0); NavSatFix carries no satellite
+# count or MAVLink fix type
 #: sensor_msgs/msg/NavSatFix
 MAVROS_GLOBAL_POSITION = '/mavros/global_position/global'
 
@@ -82,7 +89,8 @@ MAVROS_WAYPOINTS = '/mavros/mission/waypoints'
 #: bagwis_interfaces/msg/FinalMetrics
 DASHBOARD_FINAL_METRICS = '/dashboard/final_metrics'
 
-# independent of the perception chain (DD-CN-10); health_node derives lidar_available only from fresh alerts (1.1.0)
+# independent of the perception chain (DD-CN-10); health_node derives lidar_available only from
+# fresh alerts (1.1.0)
 #: bagwis_interfaces/msg/SafetyAlert
 DASHBOARD_SAFETY_ALERTS = '/dashboard/safety_alerts'
 
@@ -152,7 +160,12 @@ TOPICS = {
         'name': '/ai/detections_raw',
         'type': 'bagwis_interfaces/msg/SegmentedDetectionArray',
         'publisher': 'yolo26n_inference_node',
-        'subscribers': ['dynamic_sampling_node', 'georeferencing_node', 'rosbridge_websocket_node', 'health_node'],
+        'subscribers': [
+            'dynamic_sampling_node',
+            'georeferencing_node',
+            'rosbridge_websocket_node',
+            'health_node',
+        ],
         'qos': 'sensor_data',
     },
     'AI_DETECTIONS': {
