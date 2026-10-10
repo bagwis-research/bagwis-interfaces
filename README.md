@@ -92,21 +92,41 @@ npm install && npm run verify     # generate.py --check && tsc --noEmit
 Declared: `std_msgs`, `geographic_msgs`, `builtin_interfaces` — the only
 packages whose types appear in a field.
 
-Not declared: `sensor_msgs`, `vision_msgs`, `geometry_msgs`, `mavros_msgs`.
-They appear in the SRS-00 §3 topic table but in no field here, so depending on
-them would force those apt packages onto every machine that builds this one,
-the Pi Zero 2 W included, for a dependency nothing uses. Their types are
-recorded in `topics/registry.yaml`; each consumer declares what it subscribes to.
+Not declared: `sensor_msgs`, `vision_msgs`, `geometry_msgs`, `mavros_msgs`,
+`rosbridge_msgs`. They appear in the SRS-00 §3 topic table or the registry but
+in no field here, so depending on them would force those apt packages onto
+every machine that builds this one, the Pi Zero 2 W included, for a dependency
+nothing uses. Their types are recorded in `topics/registry.yaml`; each
+consumer declares what it subscribes to.
+
+## F3.8 additive hosting contract: 1.1.0 / v1.1.0-rc.1
+
+ROS and npm package versions are **1.1.0**; the F3.8 core/web branches pin the
+immutable prerelease **`v1.1.0-rc.1`** for coordinated validation. Stable
+`v1.1.0` is published only after both owners approve and the contract merges;
+consumers on main stay on `v1.0.0` until then. Nothing from 1.0.0 is renamed,
+retyped or re-QoS'd. The additions (see `CHANGELOG.md`):
+
+- `SystemHealth.BACKEND_UNKNOWN=255` and the unavailable-measurement
+  convention (NaN / unknown constant / `active_warnings` → JSON `null` over
+  rosbridge).
+- `BRIDGE_CLIENT_COUNT` and `BRIDGE_CONNECTED_CLIENTS`, the upstream
+  rosbridge ClientManager publications the composed bridge node emits.
+- `rosbridge_websocket_node` subscriptions to the MJPEG compositor inputs
+  (`CAMERA_IMAGE_RAW_COMPRESSED`, `CAMERA_INFO`, `AI_DETECTIONS_RAW`).
+- `health_node` subscriptions to its actual measurement sources.
+
+Mission service names, request/response shapes and ownership
+(`rosbridge_websocket_node`) are unchanged.
 
 ## F3.6 breaking contract: 1.0.0 / v1.0.0-rc.1
 
-ROS and npm package versions are **1.0.0**; coordinated core/web/airborne
-consumers pin **`v1.0.0-rc.1`**. The contract is in
-[draft PR #5](https://github.com/bagwis-research/bagwis-interfaces/pull/5),
+ROS and npm package versions were **1.0.0**; stable `v1.0.0` tags the merged
+contract and is the pin of every main-branch consumer. The contract was in
+[PR #5](https://github.com/bagwis-research/bagwis-interfaces/pull/5),
 requiring both Joshua (`JoshuaHM-p4`) and Earl Clyde (`EarlClydeeee`) to review.
-Interfaces approval/merge and stable `v1.0.0` publication must precede consumer
-stable pin updates. Neither this prerelease nor a consumer PR is approval to
-merge, publish stable tags or mark field gates complete.
+Neither a prerelease nor a consumer PR is approval to merge, publish stable
+tags or mark field gates complete.
 
 ### Atomic segmented detections
 

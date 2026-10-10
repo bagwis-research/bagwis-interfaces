@@ -13,6 +13,8 @@ export const SystemHealth_LINK_DEGRADED = 1;
 export const SystemHealth_LINK_LOST = 2;
 export const SystemHealth_BACKEND_ONNX = 0;
 export const SystemHealth_BACKEND_RKNN = 1;
+/** no trustworthy producer reported a backend (1.1.0) */
+export const SystemHealth_BACKEND_UNKNOWN = 255;
 
 export interface SystemHealth {
   header: Header;
@@ -39,7 +41,7 @@ export interface SystemHealth {
   gps_satellites: number;
   /** 0 OK - 1 DEGRADED - 2 LOST */
   link_state: number;
-  /** 0 ONNX - 1 RKNN */
+  /** 0 ONNX - 1 RKNN - 255 UNKNOWN */
   inference_backend: number;
   nir_available: boolean;
   lidar_available: boolean;

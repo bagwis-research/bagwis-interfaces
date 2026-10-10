@@ -16,18 +16,18 @@ from __future__ import annotations
 #: sensor_msgs/msg/Image
 CAMERA_IMAGE_RAW = '/camera/image_raw'
 
-# image_transport compressed plugin -- the only video crossing the radio link
+# image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0)
 #: sensor_msgs/msg/CompressedImage
 CAMERA_IMAGE_RAW_COMPRESSED = '/camera/image_raw/compressed'
 
 #: sensor_msgs/msg/Image
 CAMERA_IMAGE_PROCESSED = '/camera/image_processed'
 
-# intrinsics for GSD
+# intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before drawing held overlays (1.1.0)
 #: sensor_msgs/msg/CameraInfo
 CAMERA_INFO = '/camera/camera_info'
 
-# every inferred frame before admission; georeferencing counts unique capture stamps only
+# every inferred frame before admission; georeferencing counts unique capture stamps only; rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0)
 #: bagwis_interfaces/msg/SegmentedDetectionArray
 AI_DETECTIONS_RAW = '/ai/detections_raw'
 
@@ -35,7 +35,7 @@ AI_DETECTIONS_RAW = '/ai/detections_raw'
 #: bagwis_interfaces/msg/SegmentedDetectionArray
 AI_DETECTIONS = '/ai/detections'
 
-# C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
+# C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. health_node derives nir_available from it (1.1.0)
 #: bagwis_interfaces/msg/NdviResult
 AI_NDVI = '/ai/ndvi'
 
@@ -51,6 +51,7 @@ CORE_GEO_DETECTIONS = '/core/geo_detections'
 #: bagwis_interfaces/msg/GeoreferencingStatus
 CORE_GEOREFERENCING_STATUS = '/core/georeferencing_status'
 
+# health_node measures telemetry receipt age for link_state (1.1.0); NavSatFix carries no satellite count or MAVLink fix type
 #: sensor_msgs/msg/NavSatFix
 MAVROS_GLOBAL_POSITION = '/mavros/global_position/global'
 
@@ -81,7 +82,7 @@ MAVROS_WAYPOINTS = '/mavros/mission/waypoints'
 #: bagwis_interfaces/msg/FinalMetrics
 DASHBOARD_FINAL_METRICS = '/dashboard/final_metrics'
 
-# independent of the perception chain (DD-CN-10)
+# independent of the perception chain (DD-CN-10); health_node derives lidar_available only from fresh alerts (1.1.0)
 #: bagwis_interfaces/msg/SafetyAlert
 DASHBOARD_SAFETY_ALERTS = '/dashboard/safety_alerts'
 
@@ -92,6 +93,14 @@ DASHBOARD_SYSTEM_HEALTH = '/dashboard/system_health'
 # NEW -- not named in SRS-00 SS3; justified by FR-CN-47 and FR-WEB-21. Latched.
 #: bagwis_interfaces/msg/AnalyticsAssumptions
 DASHBOARD_ASSUMPTIONS = '/dashboard/assumptions'
+
+# number of connected WebSocket clients (rosbridge_server ClientManager)
+#: std_msgs/msg/Int32
+BRIDGE_CLIENT_COUNT = '/client_count'
+
+# per-client address and connection time (rosbridge_server ClientManager)
+#: rosbridge_msgs/msg/ConnectedClients
+BRIDGE_CONNECTED_CLIENTS = '/connected_clients'
 
 # --- Services ---
 
@@ -122,7 +131,7 @@ TOPICS = {
         'name': '/camera/image_raw/compressed',
         'type': 'sensor_msgs/msg/CompressedImage',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['preprocessing_node'],
+        'subscribers': ['preprocessing_node', 'rosbridge_websocket_node', 'health_node'],
         'qos': 'image_stream',
     },
     'CAMERA_IMAGE_PROCESSED': {
@@ -136,14 +145,14 @@ TOPICS = {
         'name': '/camera/camera_info',
         'type': 'sensor_msgs/msg/CameraInfo',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['georeferencing_node'],
+        'subscribers': ['georeferencing_node', 'rosbridge_websocket_node'],
         'qos': 'default',
     },
     'AI_DETECTIONS_RAW': {
         'name': '/ai/detections_raw',
         'type': 'bagwis_interfaces/msg/SegmentedDetectionArray',
         'publisher': 'yolo26n_inference_node',
-        'subscribers': ['dynamic_sampling_node', 'georeferencing_node'],
+        'subscribers': ['dynamic_sampling_node', 'georeferencing_node', 'rosbridge_websocket_node', 'health_node'],
         'qos': 'image_stream',
     },
     'AI_DETECTIONS': {
@@ -157,7 +166,7 @@ TOPICS = {
         'name': '/ai/ndvi',
         'type': 'bagwis_interfaces/msg/NdviResult',
         'publisher': 'ndvi_computation_node',
-        'subscribers': ['georeferencing_node', 'dynamic_sampling_node'],
+        'subscribers': ['georeferencing_node', 'dynamic_sampling_node', 'health_node'],
         'qos': 'default',
     },
     'CORE_ADMISSION_STATUS': {
@@ -185,7 +194,7 @@ TOPICS = {
         'name': '/mavros/global_position/global',
         'type': 'sensor_msgs/msg/NavSatFix',
         'publisher': 'mavros_node',
-        'subscribers': ['georeferencing_node', 'dynamic_sampling_node'],
+        'subscribers': ['georeferencing_node', 'dynamic_sampling_node', 'health_node'],
         'qos': 'sensor_data',
     },
     'MAVROS_REL_ALT': {
@@ -241,7 +250,7 @@ TOPICS = {
         'name': '/dashboard/safety_alerts',
         'type': 'bagwis_interfaces/msg/SafetyAlert',
         'publisher': 'lidar_safety_node',
-        'subscribers': ['rosbridge_websocket_node'],
+        'subscribers': ['rosbridge_websocket_node', 'health_node'],
         'qos': 'default',
     },
     'DASHBOARD_SYSTEM_HEALTH': {
@@ -256,6 +265,20 @@ TOPICS = {
         'type': 'bagwis_interfaces/msg/AnalyticsAssumptions',
         'publisher': 'georeferencing_node',
         'subscribers': ['rosbridge_websocket_node'],
+        'qos': 'transient_local',
+    },
+    'BRIDGE_CLIENT_COUNT': {
+        'name': '/client_count',
+        'type': 'std_msgs/msg/Int32',
+        'publisher': 'rosbridge_websocket_node',
+        'subscribers': [],
+        'qos': 'transient_local',
+    },
+    'BRIDGE_CONNECTED_CLIENTS': {
+        'name': '/connected_clients',
+        'type': 'rosbridge_msgs/msg/ConnectedClients',
+        'publisher': 'rosbridge_websocket_node',
+        'subscribers': [],
         'qos': 'transient_local',
     },
 }

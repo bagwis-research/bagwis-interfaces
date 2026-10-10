@@ -57,9 +57,9 @@ topics:
     name: /camera/image_raw/compressed
     type: sensor_msgs/msg/CompressedImage
     publisher: v4l2_camera_node
-    subscribers: [preprocessing_node]
+    subscribers: [preprocessing_node, rosbridge_websocket_node, health_node]
     qos: image_stream
-    note: image_transport compressed plugin -- the only video crossing the radio link
+    note: image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0)
 
   - const: CAMERA_IMAGE_PROCESSED
     name: /camera/image_processed
@@ -72,9 +72,9 @@ topics:
     name: /camera/camera_info
     type: sensor_msgs/msg/CameraInfo
     publisher: v4l2_camera_node
-    subscribers: [georeferencing_node]
+    subscribers: [georeferencing_node, rosbridge_websocket_node]
     qos: default
-    note: intrinsics for GSD
+    note: intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before drawing held overlays (1.1.0)
 
   # --- Layer 2: perception (SRS-00 SS3.1) ---
 
@@ -82,9 +82,9 @@ topics:
     name: /ai/detections_raw
     type: bagwis_interfaces/msg/SegmentedDetectionArray
     publisher: yolo26n_inference_node
-    subscribers: [dynamic_sampling_node, georeferencing_node]
+    subscribers: [dynamic_sampling_node, georeferencing_node, rosbridge_websocket_node, health_node]
     qos: image_stream
-    note: every inferred frame before admission; georeferencing counts unique capture stamps only
+    note: every inferred frame before admission; georeferencing counts unique capture stamps only; rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0)
 
   - const: AI_DETECTIONS
     name: /ai/detections
@@ -98,9 +98,9 @@ topics:
     name: /ai/ndvi
     type: bagwis_interfaces/msg/NdviResult
     publisher: ndvi_computation_node
-    subscribers: [georeferencing_node, dynamic_sampling_node]
+    subscribers: [georeferencing_node, dynamic_sampling_node, health_node]
     qos: default
-    note: C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
+    note: C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. health_node derives nir_available from it (1.1.0)
 
   - const: CORE_ADMISSION_STATUS
     name: /core/admission_status
@@ -132,8 +132,9 @@ topics:
     name: /mavros/global_position/global
     type: sensor_msgs/msg/NavSatFix
     publisher: mavros_node
-    subscribers: [georeferencing_node, dynamic_sampling_node]
+    subscribers: [georeferencing_node, dynamic_sampling_node, health_node]
     qos: sensor_data
+    note: health_node measures telemetry receipt age for link_state (1.1.0); NavSatFix carries no satellite count or MAVLink fix type
 
   - const: MAVROS_REL_ALT
     name: /mavros/global_position/rel_alt
@@ -196,9 +197,9 @@ topics:
     name: /dashboard/safety_alerts
     type: bagwis_interfaces/msg/SafetyAlert
     publisher: lidar_safety_node
-    subscribers: [rosbridge_websocket_node]
+    subscribers: [rosbridge_websocket_node, health_node]
     qos: default
-    note: independent of the perception chain (DD-CN-10)
+    note: independent of the perception chain (DD-CN-10); health_node derives lidar_available only from fresh alerts (1.1.0)
 
   - const: DASHBOARD_SYSTEM_HEALTH
     name: /dashboard/system_health
@@ -215,6 +216,28 @@ topics:
     subscribers: [rosbridge_websocket_node]
     qos: transient_local
     note: NEW -- not named in SRS-00 SS3; justified by FR-CN-47 and FR-WEB-21. Latched.
+
+  # --- Bridge client monitoring (rosbridge_server ClientManager, 1.1.0) ---
+  # Published by the upstream rosbridge_server ClientManager that
+  # rosbridge_websocket_node composes; latched with depth 1. Declared so the
+  # graph conformance check sees them as expected publications rather than
+  # undeclared edges. Not browser-readable.
+
+  - const: BRIDGE_CLIENT_COUNT
+    name: /client_count
+    type: std_msgs/msg/Int32
+    publisher: rosbridge_websocket_node
+    subscribers: []
+    qos: transient_local
+    note: number of connected WebSocket clients (rosbridge_server ClientManager)
+
+  - const: BRIDGE_CONNECTED_CLIENTS
+    name: /connected_clients
+    type: rosbridge_msgs/msg/ConnectedClients
+    publisher: rosbridge_websocket_node
+    subscribers: []
+    qos: transient_local
+    note: per-client address and connection time (rosbridge_server ClientManager)
 
 services:
 
