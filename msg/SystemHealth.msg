@@ -5,6 +5,12 @@
 # sampling_interval_s, fov_footprint_m, admitted_frames and shed_rate are here so
 # the non-overlap claim is observable rather than asserted (FR-CN-07, FR-CN-09).
 # health_node copies them from /core/admission_status.
+#
+# Unavailable measurements are NaN (float) or the explicit unknown constant
+# (inference_backend), never 0: 0 is a valid reading and BACKEND_ONNX. The
+# standard rosbridge conversion carries NaN to JSON null, which the dashboard
+# must keep as "unavailable". Each unavailable field is also named in
+# active_warnings. (1.1.0)
 
 std_msgs/Header header
 
@@ -35,7 +41,8 @@ uint8    link_state                 # 0 OK - 1 DEGRADED - 2 LOST
 
 uint8    BACKEND_ONNX=0
 uint8    BACKEND_RKNN=1
-uint8    inference_backend          # 0 ONNX - 1 RKNN
+uint8    BACKEND_UNKNOWN=255        # no trustworthy producer reported a backend (1.1.0)
+uint8    inference_backend          # 0 ONNX - 1 RKNN - 255 UNKNOWN
 
 bool     nir_available
 bool     lidar_available

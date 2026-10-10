@@ -15,6 +15,47 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [1.1.0-rc.1] — 2026-10-10
+
+Additive F3.8 hosting contract (minor bump, FR-IF-05). ROS and npm package
+versions are both **1.1.0**; `v1.1.0-rc.1` is the immutable coordinated
+testing tag for the feature branches. Stable `v1.1.0` requires both owners'
+approvals and the merged contract first (README step 4); stable consumers stay
+on `v1.0.0` until then. No field, name, type or QoS of 1.0.0 changes.
+
+### Added
+
+- `SystemHealth.BACKEND_UNKNOWN=255`: the explicit "no trustworthy producer"
+  value of `inference_backend`. `BACKEND_ONNX=0` is a real backend, not a
+  default. Header comment now states the unavailable-measurement convention
+  (NaN / unknown constant / `active_warnings`), which rosbridge carries to the
+  dashboard as JSON `null`.
+- `BRIDGE_CLIENT_COUNT` (`/client_count`, `std_msgs/msg/Int32`) and
+  `BRIDGE_CONNECTED_CLIENTS` (`/connected_clients`,
+  `rosbridge_msgs/msg/ConnectedClients`), transient-local, published by the
+  upstream `rosbridge_server` ClientManager that `rosbridge_websocket_node`
+  composes. Declared so graph conformance expects them; neither is
+  browser-readable. As with every foreign type in the registry, this package
+  does not depend on `rosbridge_msgs`; core declares it.
+- `rosbridge_websocket_node` declared subscriber of
+  `CAMERA_IMAGE_RAW_COMPRESSED`, `CAMERA_INFO` and `AI_DETECTIONS_RAW`: the
+  native inputs of the `/video.mjpeg` compositor (T3.8.3). No new image topic.
+- `health_node` declared subscriber of `CAMERA_IMAGE_RAW_COMPRESSED`
+  (downlink_fps), `AI_DETECTIONS_RAW`, `AI_NDVI` (nir_available),
+  `MAVROS_GLOBAL_POSITION` (link freshness) and `DASHBOARD_SAFETY_ALERTS`
+  (lidar_available), in addition to its 1.0.0 inputs (T3.8.8).
+
+### Consumers and release order
+
+- bagwis-core (F3.8 branch): host, health, recorder and conformance consume
+  the additions; pins `v1.1.0-rc.1` until stable.
+- bagwis-web (F3.8 branch): transport treats `null` numerics as unavailable and
+  compares `inference_backend` against `SystemHealth_BACKEND_UNKNOWN`; pins
+  `v1.1.0-rc.1` until stable.
+- bagwis-airborne: unaffected (no airborne field or topic changed).
+
+---
+
 ## [1.0.0-rc.1] — 2026-10-08
 
 Breaking F3.6 shared contract. ROS and npm package versions are both **1.0.0**;

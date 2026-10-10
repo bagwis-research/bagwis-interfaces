@@ -18,18 +18,18 @@ namespace topics
 /// Type: sensor_msgs/msg/Image
 inline constexpr char CAMERA_IMAGE_RAW[] = "/camera/image_raw";
 
-/// image_transport compressed plugin -- the only video crossing the radio link
+/// image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0)
 /// Type: sensor_msgs/msg/CompressedImage
 inline constexpr char CAMERA_IMAGE_RAW_COMPRESSED[] = "/camera/image_raw/compressed";
 
 /// Type: sensor_msgs/msg/Image
 inline constexpr char CAMERA_IMAGE_PROCESSED[] = "/camera/image_processed";
 
-/// intrinsics for GSD
+/// intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before drawing held overlays (1.1.0)
 /// Type: sensor_msgs/msg/CameraInfo
 inline constexpr char CAMERA_INFO[] = "/camera/camera_info";
 
-/// every inferred frame before admission; georeferencing counts unique capture stamps only
+/// every inferred frame before admission; georeferencing counts unique capture stamps only; rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0)
 /// Type: bagwis_interfaces/msg/SegmentedDetectionArray
 inline constexpr char AI_DETECTIONS_RAW[] = "/ai/detections_raw";
 
@@ -37,7 +37,7 @@ inline constexpr char AI_DETECTIONS_RAW[] = "/ai/detections_raw";
 /// Type: bagwis_interfaces/msg/SegmentedDetectionArray
 inline constexpr char AI_DETECTIONS[] = "/ai/detections";
 
-/// C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS.
+/// C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. health_node derives nir_available from it (1.1.0)
 /// Type: bagwis_interfaces/msg/NdviResult
 inline constexpr char AI_NDVI[] = "/ai/ndvi";
 
@@ -53,6 +53,7 @@ inline constexpr char CORE_GEO_DETECTIONS[] = "/core/geo_detections";
 /// Type: bagwis_interfaces/msg/GeoreferencingStatus
 inline constexpr char CORE_GEOREFERENCING_STATUS[] = "/core/georeferencing_status";
 
+/// health_node measures telemetry receipt age for link_state (1.1.0); NavSatFix carries no satellite count or MAVLink fix type
 /// Type: sensor_msgs/msg/NavSatFix
 inline constexpr char MAVROS_GLOBAL_POSITION[] = "/mavros/global_position/global";
 
@@ -83,7 +84,7 @@ inline constexpr char MAVROS_WAYPOINTS[] = "/mavros/mission/waypoints";
 /// Type: bagwis_interfaces/msg/FinalMetrics
 inline constexpr char DASHBOARD_FINAL_METRICS[] = "/dashboard/final_metrics";
 
-/// independent of the perception chain (DD-CN-10)
+/// independent of the perception chain (DD-CN-10); health_node derives lidar_available only from fresh alerts (1.1.0)
 /// Type: bagwis_interfaces/msg/SafetyAlert
 inline constexpr char DASHBOARD_SAFETY_ALERTS[] = "/dashboard/safety_alerts";
 
@@ -94,6 +95,14 @@ inline constexpr char DASHBOARD_SYSTEM_HEALTH[] = "/dashboard/system_health";
 /// NEW -- not named in SRS-00 SS3; justified by FR-CN-47 and FR-WEB-21. Latched.
 /// Type: bagwis_interfaces/msg/AnalyticsAssumptions
 inline constexpr char DASHBOARD_ASSUMPTIONS[] = "/dashboard/assumptions";
+
+/// number of connected WebSocket clients (rosbridge_server ClientManager)
+/// Type: std_msgs/msg/Int32
+inline constexpr char BRIDGE_CLIENT_COUNT[] = "/client_count";
+
+/// per-client address and connection time (rosbridge_server ClientManager)
+/// Type: rosbridge_msgs/msg/ConnectedClients
+inline constexpr char BRIDGE_CONNECTED_CLIENTS[] = "/connected_clients";
 
 }  // namespace topics
 
