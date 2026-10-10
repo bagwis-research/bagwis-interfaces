@@ -99,13 +99,16 @@ every machine that builds this one, the Pi Zero 2 W included, for a dependency
 nothing uses. Their types are recorded in `topics/registry.yaml`; each
 consumer declares what it subscribes to.
 
-## F3.8 additive hosting contract: 1.1.0 / v1.1.0-rc.1
+## F3.8 additive hosting contract: 1.1.0 / v1.1.0-rc.2
 
-ROS and npm package versions are **1.1.0**; the F3.8 core/web branches pin the
-immutable prerelease **`v1.1.0-rc.1`** for coordinated validation. Stable
-`v1.1.0` is published only after both owners approve and the contract merges;
-consumers on main stay on `v1.0.0` until then. Nothing from 1.0.0 is renamed,
-retyped or re-QoS'd. The additions (see `CHANGELOG.md`):
+ROS and npm package versions are **1.1.0**. The contract is merged to `main`
+(PRs #8, #9 and #7); the F3.8 core/web consumers pin the immutable prerelease
+**`v1.1.0-rc.2`** (`rc.1` predates the `image_stream` QoS class and stays
+immutable). Stable `v1.1.0` is published only after both owners approve;
+main-branch consumers stay on `v1.0.0` until then. Nothing from 1.0.0 is
+renamed or retyped. `image_stream` re-classes the QoS of four frame topics
+(BEST_EFFORT, KEEP_LAST 1); consumers must map it. The additions (see
+`CHANGELOG.md`):
 
 - `SystemHealth.BACKEND_UNKNOWN=255` and the unavailable-measurement
   convention (NaN / unknown constant / `active_warnings` → JSON `null` over
@@ -119,14 +122,16 @@ retyped or re-QoS'd. The additions (see `CHANGELOG.md`):
 Mission service names, request/response shapes and ownership
 (`rosbridge_websocket_node`) are unchanged.
 
-## F3.6 breaking contract: 1.0.0 / v1.0.0-rc.1
+## F3.6 stable contract: v1.0.0
 
-ROS and npm package versions were **1.0.0**; stable `v1.0.0` tags the merged
-contract and is the pin of every main-branch consumer. The contract was in
-[PR #5](https://github.com/bagwis-research/bagwis-interfaces/pull/5),
-requiring both Joshua (`JoshuaHM-p4`) and Earl Clyde (`EarlClydeeee`) to review.
-Neither a prerelease nor a consumer PR is approval to merge, publish stable
-tags or mark field gates complete.
+ROS and npm package versions are **1.0.0**. The stable
+[`v1.0.0` release](https://github.com/bagwis-research/bagwis-interfaces/releases/tag/v1.0.0)
+is published from merged [PR #5](https://github.com/bagwis-research/bagwis-interfaces/pull/5).
+Core, web and airborne have coordinated stable-pin updates after this
+interfaces-first publication. The tested `v1.0.0-rc.1` tag remains immutable;
+the stable wire contract and generated code are unchanged from the prerelease.
+The TypeScript package is private and consumed through the Git submodule, not
+published to npm. Stable publication does not mark roadmap or field gates complete.
 
 ### Atomic segmented detections
 

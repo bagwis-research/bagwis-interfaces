@@ -15,7 +15,7 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
-## [1.1.0-rc.2] — unreleased
+## [1.1.0-rc.2] — 2026-10-10
 
 Registry-only change on top of 1.1.0-rc.1: the QoS class of four frame topics.
 No `msg/` or `srv/` file moves, so the wire format is identical. It joins the
@@ -87,6 +87,20 @@ on `v1.0.0` until then. No field, name, type or QoS of 1.0.0 changes.
   compares `inference_backend` against `SystemHealth_BACKEND_UNKNOWN`; pins
   `v1.1.0-rc.1` until stable.
 - bagwis-airborne: unaffected (no airborne field or topic changed).
+
+---
+
+## [1.0.0] — 2026-10-09
+
+- Publish immutable stable `v1.0.0` from merged
+  [PR #5](https://github.com/bagwis-research/bagwis-interfaces/pull/5),
+  commit `15ed068136e5ab9d82c1b51e74a54fba103b84d6`.
+- Wire contract and generated code are identical to tested `v1.0.0-rc.1`;
+  generator verification and TypeScript typecheck passed on the merged commit.
+- Core, web and airborne promote their submodule pins after the stable
+  interfaces publication. The prerelease tag remains immutable.
+- ROS and private TypeScript package versions remain 1.0.0; the package is
+  consumed by Git tag, not published to npm. Field acceptance remains separate.
 
 ---
 
