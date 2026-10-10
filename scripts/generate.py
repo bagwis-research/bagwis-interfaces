@@ -34,6 +34,21 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 import sys
+import textwrap
+
+# ament_flake8 (Jazzy ament_lint_auto) lints the generated Python module like
+# hand-written source, with E501 at 99 columns; a registry note longer than
+# that must be wrapped, not emitted verbatim.
+PY_LINE_WIDTH = 99
+
+
+def py_comment(text: str, prefix: str = '# ') -> list[str]:
+    """Wrap ``text`` into comment lines that stay within PY_LINE_WIDTH."""
+    return textwrap.wrap(
+        text, width=PY_LINE_WIDTH, initial_indent=prefix, subsequent_indent=prefix,
+        break_long_words=False, break_on_hyphens=False,
+    ) or [prefix.rstrip()]
+
 
 BANNER_LINES = [
     'THIS FILE IS GENERATED. DO NOT EDIT.',
@@ -259,7 +274,7 @@ def emit_py(registry: dict) -> str:
     out.append('')
     for t in registry['topics']:
         if t.get('note'):
-            out.append(f"# {t['note']}")
+            out += py_comment(t['note'])
         out.append(f"#: {t['type']}")
         out.append(f'{t["const"]} = {t["name"]!r}')
         out.append('')
@@ -278,13 +293,20 @@ def emit_py(registry: dict) -> str:
         'TOPICS = {',
     ]
     for t in registry['topics']:
-        subs = ', '.join(repr(s) for s in t.get('subscribers', []))
+        subscribers = [repr(s) for s in t.get('subscribers', [])]
+        inline = f"        'subscribers': [{', '.join(subscribers)}],"
+        if len(inline) <= PY_LINE_WIDTH:
+            subs_lines = [inline]
+        else:
+            subs_lines = ["        'subscribers': ["]
+            subs_lines += [f'            {s},' for s in subscribers]
+            subs_lines.append('        ],')
         out += [
             f'    {t["const"]!r}: {{',
             f"        'name': {t['name']!r},",
             f"        'type': {t['type']!r},",
             f"        'publisher': {t['publisher']!r},",
-            f"        'subscribers': [{subs}],",
+            *subs_lines,
             f"        'qos': {t['qos']!r},",
             '    },',
         ]
