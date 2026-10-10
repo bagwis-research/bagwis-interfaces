@@ -10,18 +10,18 @@
 /** Type: `sensor_msgs/msg/Image` */
 export const CAMERA_IMAGE_RAW = "/camera/image_raw" as const;
 
-/** image_transport compressed plugin -- the only video crossing the radio link */
+/** image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0) */
 /** Type: `sensor_msgs/msg/CompressedImage` */
 export const CAMERA_IMAGE_RAW_COMPRESSED = "/camera/image_raw/compressed" as const;
 
 /** Type: `sensor_msgs/msg/Image` */
 export const CAMERA_IMAGE_PROCESSED = "/camera/image_processed" as const;
 
-/** intrinsics for GSD */
+/** intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before drawing held overlays (1.1.0) */
 /** Type: `sensor_msgs/msg/CameraInfo` */
 export const CAMERA_INFO = "/camera/camera_info" as const;
 
-/** every inferred frame before admission; georeferencing counts unique capture stamps only */
+/** every inferred frame before admission; georeferencing counts unique capture stamps only; rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0) */
 /** Type: `bagwis_interfaces/msg/SegmentedDetectionArray` */
 export const AI_DETECTIONS_RAW = "/ai/detections_raw" as const;
 
@@ -29,7 +29,7 @@ export const AI_DETECTIONS_RAW = "/ai/detections_raw" as const;
 /** Type: `bagwis_interfaces/msg/SegmentedDetectionArray` */
 export const AI_DETECTIONS = "/ai/detections" as const;
 
-/** C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. */
+/** C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. health_node derives nir_available from it (1.1.0) */
 /** Type: `bagwis_interfaces/msg/NdviResult` */
 export const AI_NDVI = "/ai/ndvi" as const;
 
@@ -45,6 +45,7 @@ export const CORE_GEO_DETECTIONS = "/core/geo_detections" as const;
 /** Type: `bagwis_interfaces/msg/GeoreferencingStatus` */
 export const CORE_GEOREFERENCING_STATUS = "/core/georeferencing_status" as const;
 
+/** health_node measures telemetry receipt age for link_state (1.1.0); NavSatFix carries no satellite count or MAVLink fix type */
 /** Type: `sensor_msgs/msg/NavSatFix` */
 export const MAVROS_GLOBAL_POSITION = "/mavros/global_position/global" as const;
 
@@ -75,7 +76,7 @@ export const MAVROS_WAYPOINTS = "/mavros/mission/waypoints" as const;
 /** Type: `bagwis_interfaces/msg/FinalMetrics` */
 export const DASHBOARD_FINAL_METRICS = "/dashboard/final_metrics" as const;
 
-/** independent of the perception chain (DD-CN-10) */
+/** independent of the perception chain (DD-CN-10); health_node derives lidar_available only from fresh alerts (1.1.0) */
 /** Type: `bagwis_interfaces/msg/SafetyAlert` */
 export const DASHBOARD_SAFETY_ALERTS = "/dashboard/safety_alerts" as const;
 
@@ -86,6 +87,14 @@ export const DASHBOARD_SYSTEM_HEALTH = "/dashboard/system_health" as const;
 /** NEW -- not named in SRS-00 SS3; justified by FR-CN-47 and FR-WEB-21. Latched. */
 /** Type: `bagwis_interfaces/msg/AnalyticsAssumptions` */
 export const DASHBOARD_ASSUMPTIONS = "/dashboard/assumptions" as const;
+
+/** number of connected WebSocket clients (rosbridge_server ClientManager) */
+/** Type: `std_msgs/msg/Int32` */
+export const BRIDGE_CLIENT_COUNT = "/client_count" as const;
+
+/** per-client address and connection time (rosbridge_server ClientManager) */
+/** Type: `rosbridge_msgs/msg/ConnectedClients` */
+export const BRIDGE_CONNECTED_CLIENTS = "/connected_clients" as const;
 
 /** Type: `bagwis_interfaces/srv/StartMission` */
 export const MISSION_START = "/mission/start" as const;
@@ -122,6 +131,8 @@ export const ALL_TOPICS = [
   DASHBOARD_SAFETY_ALERTS,
   DASHBOARD_SYSTEM_HEALTH,
   DASHBOARD_ASSUMPTIONS,
+  BRIDGE_CLIENT_COUNT,
+  BRIDGE_CONNECTED_CLIENTS,
 ] as const;
 
 export type TopicName = (typeof ALL_TOPICS)[number];
