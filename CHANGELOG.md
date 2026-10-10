@@ -15,6 +15,38 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [1.1.0-rc.3] — 2026-10-10
+
+Registry-only correction of `v1.1.0-rc.2`. No `msg/` or `srv/` file moves; the
+wire format is identical. `v1.1.0-rc.2` stays immutable and is superseded by
+`v1.1.0-rc.3`; stable `v1.1.0` carries both rc.2's `image_stream` class and
+this change.
+
+### Changed
+
+- `AI_DETECTIONS_RAW` moves from `image_stream` (BEST_EFFORT, KEEP_LAST 1)
+  back to `sensor_data` (BEST_EFFORT, KEEP_LAST 5). Only the three camera
+  frame topics (`CAMERA_IMAGE_RAW`, `CAMERA_IMAGE_RAW_COMPRESSED`,
+  `CAMERA_IMAGE_PROCESSED`) remain `image_stream`.
+- Why: georeferencing counts every inferred capture stamp
+  (`FinalMetrics.frames_inferred`) and the recorded bag must contain every
+  one. With a depth-1 queue a set delivered in a burst (a stalled executor
+  catching up, or the replay player) overwrites the previous one. On rc.2 the
+  synthetic G3 replay lost exactly one of its 400 raw sets in several runs
+  (399/400, `rejected_hover 99`), failing `check_g3` and bagwis-core CI. A
+  stale frame is worth dropping; a counted inference result is not.
+- The registry header now says `image_stream` is for camera frames only and
+  lists per-frame inference output under `sensor_data`.
+
+### Consumers
+
+`bagwis-core` needs no mapping change (both classes already exist in
+`qos.py`); its QoS test expectations for `AI_DETECTIONS_RAW` change from depth 1
+to the `sensor_data` profile, and its submodule pin moves to
+`v1.1.0-rc.3`. `bagwis-web` and `bagwis-airborne` are unaffected.
+
+---
+
 ## [1.1.0-rc.2] — 2026-10-10
 
 Registry-only change on top of 1.1.0-rc.1: the QoS class of four frame topics.

@@ -27,13 +27,16 @@
 # infrastructure/qos.py). A publisher and a subscriber that disagree on
 # reliability never match, and the subscriber receives nothing -- the same dead
 # sensor as a transposed name -- so both ends read the class from here.
-#   image_stream     BEST_EFFORT, KEEP_LAST 1. Frames and per-frame inference
-#                    output. Over the radio link a retransmitted stale frame is
-#                    worth less than the next one, and any queue deeper than one
-#                    turns packet loss into latency (DD-AN-3).
+#   image_stream     BEST_EFFORT, KEEP_LAST 1. Camera frames only. Over the radio
+#                    link a retransmitted stale frame is worth less than the next
+#                    one, and any queue deeper than one turns packet loss into
+#                    latency (DD-AN-3). Not for anything a consumer must count.
 #   sensor_data      BEST_EFFORT, KEEP_LAST 5 (the rmw sensor-data profile).
-#                    MAVROS telemetry: a short history, so the GPS sample taken
-#                    just before a frame's capture stamp is still there to pair.
+#                    MAVROS telemetry, and per-frame inference output
+#                    (AI_DETECTIONS_RAW): a short history, so the GPS sample
+#                    taken just before a capture stamp is still there to pair,
+#                    and one set delivered in a burst is not dropped -- every
+#                    inferred frame is counted (frames_inferred).
 #   default          RELIABLE, KEEP_LAST 10. Admitted sets, status, metrics and
 #                    commands. Nothing in this class may be dropped silently.
 #   transient_local  RELIABLE, KEEP_LAST 1, latched: a late subscriber still
@@ -83,8 +86,8 @@ topics:
     type: bagwis_interfaces/msg/SegmentedDetectionArray
     publisher: yolo26n_inference_node
     subscribers: [dynamic_sampling_node, georeferencing_node, rosbridge_websocket_node, health_node]
-    qos: image_stream
-    note: every inferred frame before admission; georeferencing counts unique capture stamps only; rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0)
+    qos: sensor_data
+    note: every inferred frame before admission; georeferencing counts unique capture stamps only, so a depth-1 queue that drops one burst-delivered set breaks the count (sensor_data keeps history 5); rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0)
 
   - const: AI_DETECTIONS
     name: /ai/detections
