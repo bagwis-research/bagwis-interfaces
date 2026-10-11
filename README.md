@@ -99,17 +99,18 @@ every machine that builds this one, the Pi Zero 2 W included, for a dependency
 nothing uses. Their types are recorded in `topics/registry.yaml`; each
 consumer declares what it subscribes to.
 
-## F3.8 additive hosting contract: 1.1.0 / v1.1.0-rc.3
+## F3.8 additive hosting contract: 1.1.0 (stable `v1.1.0`)
 
-ROS and npm package versions are **1.1.0**. The contract is merged to `main`
-(PRs #8, #9, #7 and the QoS correction); the F3.8 core/web consumers pin the
-immutable prerelease **`v1.1.0-rc.3`**. `rc.1` predates the `image_stream` QoS
-class and `rc.2` put `AI_DETECTIONS_RAW` in it, which can drop a counted
-inference result; both stay immutable. Stable `v1.1.0` is published only
-after both owners approve; main-branch consumers stay on `v1.0.0` until then.
-Nothing from 1.0.0 is renamed or retyped. `image_stream` re-classes the QoS of
-the three camera frame topics (BEST_EFFORT, KEEP_LAST 1); consumers must map
-it. The additions (see `CHANGELOG.md`):
+ROS and npm package versions are **1.1.0**. The stable
+[`v1.1.0` release](https://github.com/bagwis-research/bagwis-interfaces/releases/tag/v1.1.0)
+is published from merged [PR #10](https://github.com/bagwis-research/bagwis-interfaces/pull/10)
+(commit `1568e50`, identical to the tested prerelease `v1.1.0-rc.3`); core and
+web pin that commit. `rc.1` predates the `image_stream` QoS class and `rc.2`
+put `AI_DETECTIONS_RAW` in it, which can drop a counted inference result; all
+three prerelease tags stay immutable. Nothing from 1.0.0 is renamed or
+retyped. `image_stream` re-classes the QoS of the three camera frame topics
+(BEST_EFFORT, KEEP_LAST 1); consumers must map it. The additions (see
+`CHANGELOG.md`):
 
 - `SystemHealth.BACKEND_UNKNOWN=255` and the unavailable-measurement
   convention (NaN / unknown constant / `active_warnings` → JSON `null` over
