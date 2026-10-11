@@ -15,6 +15,26 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
 
+## [1.1.0] — 2026-10-11
+
+- Publish immutable stable `v1.1.0` from merged
+  [PR #10](https://github.com/bagwis-research/bagwis-interfaces/pull/10),
+  commit `1568e509b06118deff7fb25e3da6d65acede81b2`, the commit tagged
+  `v1.1.0-rc.3`; the stable release is the tested prerelease, byte for byte.
+  This documentation follow-up is not the tag target.
+- Contents (see `[1.1.0-rc.1]` through `[1.1.0-rc.3]` below): additive F3.8
+  contract (`SystemHealth.BACKEND_UNKNOWN`, the rosbridge client-monitoring
+  topics, bridge/health subscription declarations) and the `image_stream` QoS
+  class for the three camera frame topics, with `AI_DETECTIONS_RAW` kept in
+  `sensor_data`. Nothing from `v1.0.0` is renamed or retyped.
+- Core and web already pin this commit; their pins are named `v1.1.0` from
+  now on. The `v1.1.0-rc.1`, `-rc.2` and `-rc.3` tags remain immutable.
+- Publication was authorized by JoshuaHM-p4; no review by EarlClydeeee is
+  recorded on the contract PRs (README step 4 asks for both owners). Field
+  acceptance remains separate.
+
+---
+
 ## [1.1.0-rc.3] — 2026-10-10
 
 Registry-only correction of `v1.1.0-rc.2`. No `msg/` or `srv/` file moves; the
