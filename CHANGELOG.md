@@ -32,6 +32,41 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 - Publication was authorized by JoshuaHM-p4; no review by EarlClydeeee is
   recorded on the contract PRs (README step 4 asks for both owners). Field
   acceptance remains separate.
+## [1.2.0-rc.1] — 2026-10-14
+
+Additive prerelease based on `v1.1.0`; stable publication still requires both
+owners' approvals. ROS version 1.2.0; private npm version 1.2.0-rc.1.
+
+### Added
+
+- `CameraFrameMetadata`: capture header, per-stream sequence, explicit source
+  and clock, original signed nanosecond timestamp/reference, encoding/native
+  bit depth, spectral band, measured exposure/gain/levels and radiometric
+  validity/provenance. Unknown controls are NaN, not invented zeroes.
+- Lossless NIR compressed-frame, CameraInfo and metadata registry entries,
+  plus RGB frame metadata. NIR PNG preserves native 10–16-bit sample values
+  and explicit Bayer orientation; it is not the contrast/gamma-adjusted
+  browser preview. Frame QoS remains best-effort depth 1; info/metadata use
+  reliable depth 10.
+- Generated C++, Python and TypeScript constants and metadata types.
+
+### Fixed
+
+- Export the canonical topic-header include directory through an interface
+  target. Modern ament target consumers previously received only rosidl's
+  nested generated-header path and could not include `topics.hpp`.
+
+### Consumers and verification
+
+`bagwis-airborne` pins this candidate for its C++ Jazzy file-replay camera
+component. Existing RGB topics and wire types are unchanged. Neither the
+protected `bagwis-core` checkout nor `bagwis-web` is changed; their scientific
+NIR consumption is a later integration step.
+
+Jazzy build, generated-output check and TypeScript typecheck passed. Real ROS
+subscribers and the standard compressed-image decoder recovered all four
+synthetic RAW10 Bayer frames exactly, with source stamps retained. Replay
+does not prove physical NIR capture, calibration or NDVI.
 
 ---
 

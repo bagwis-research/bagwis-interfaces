@@ -21,6 +21,18 @@ export const CAMERA_IMAGE_PROCESSED = "/camera/image_processed" as const;
 /** Type: `sensor_msgs/msg/CameraInfo` */
 export const CAMERA_INFO = "/camera/camera_info" as const;
 
+/** Type: `sensor_msgs/msg/CompressedImage` */
+export const CAMERA_NIR_IMAGE_RAW_COMPRESSED = "/camera/nir/image_raw/compressed" as const;
+
+/** Type: `sensor_msgs/msg/CameraInfo` */
+export const CAMERA_NIR_INFO = "/camera/nir/camera_info" as const;
+
+/** Type: `bagwis_interfaces/msg/CameraFrameMetadata` */
+export const CAMERA_NIR_FRAME_METADATA = "/camera/nir/frame_metadata" as const;
+
+/** Type: `bagwis_interfaces/msg/CameraFrameMetadata` */
+export const CAMERA_FRAME_METADATA = "/camera/frame_metadata" as const;
+
 /** every inferred frame before admission; georeferencing counts unique capture stamps only, so a depth-1 queue that drops one burst-delivered set breaks the count (sensor_data keeps history 5); rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0) */
 /** Type: `bagwis_interfaces/msg/SegmentedDetectionArray` */
 export const AI_DETECTIONS_RAW = "/ai/detections_raw" as const;
@@ -114,6 +126,10 @@ export const ALL_TOPICS = [
   CAMERA_IMAGE_RAW_COMPRESSED,
   CAMERA_IMAGE_PROCESSED,
   CAMERA_INFO,
+  CAMERA_NIR_IMAGE_RAW_COMPRESSED,
+  CAMERA_NIR_INFO,
+  CAMERA_NIR_FRAME_METADATA,
+  CAMERA_FRAME_METADATA,
   AI_DETECTIONS_RAW,
   AI_DETECTIONS,
   AI_NDVI,

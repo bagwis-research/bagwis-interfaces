@@ -30,6 +30,18 @@ CAMERA_IMAGE_PROCESSED = '/camera/image_processed'
 #: sensor_msgs/msg/CameraInfo
 CAMERA_INFO = '/camera/camera_info'
 
+#: sensor_msgs/msg/CompressedImage
+CAMERA_NIR_IMAGE_RAW_COMPRESSED = '/camera/nir/image_raw/compressed'
+
+#: sensor_msgs/msg/CameraInfo
+CAMERA_NIR_INFO = '/camera/nir/camera_info'
+
+#: bagwis_interfaces/msg/CameraFrameMetadata
+CAMERA_NIR_FRAME_METADATA = '/camera/nir/frame_metadata'
+
+#: bagwis_interfaces/msg/CameraFrameMetadata
+CAMERA_FRAME_METADATA = '/camera/frame_metadata'
+
 # every inferred frame before admission; georeferencing counts unique capture stamps only, so a
 # depth-1 queue that drops one burst-delivered set breaks the count (sensor_data keeps history 5);
 # rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures
@@ -155,6 +167,34 @@ TOPICS = {
         'type': 'sensor_msgs/msg/CameraInfo',
         'publisher': 'v4l2_camera_node',
         'subscribers': ['georeferencing_node', 'rosbridge_websocket_node'],
+        'qos': 'default',
+    },
+    'CAMERA_NIR_IMAGE_RAW_COMPRESSED': {
+        'name': '/camera/nir/image_raw/compressed',
+        'type': 'sensor_msgs/msg/CompressedImage',
+        'publisher': 'v4l2_camera_node',
+        'subscribers': ['ndvi_computation_node'],
+        'qos': 'image_stream',
+    },
+    'CAMERA_NIR_INFO': {
+        'name': '/camera/nir/camera_info',
+        'type': 'sensor_msgs/msg/CameraInfo',
+        'publisher': 'v4l2_camera_node',
+        'subscribers': ['ndvi_computation_node'],
+        'qos': 'default',
+    },
+    'CAMERA_NIR_FRAME_METADATA': {
+        'name': '/camera/nir/frame_metadata',
+        'type': 'bagwis_interfaces/msg/CameraFrameMetadata',
+        'publisher': 'v4l2_camera_node',
+        'subscribers': ['ndvi_computation_node'],
+        'qos': 'default',
+    },
+    'CAMERA_FRAME_METADATA': {
+        'name': '/camera/frame_metadata',
+        'type': 'bagwis_interfaces/msg/CameraFrameMetadata',
+        'publisher': 'v4l2_camera_node',
+        'subscribers': ['ndvi_computation_node'],
         'qos': 'default',
     },
     'AI_DETECTIONS_RAW': {
