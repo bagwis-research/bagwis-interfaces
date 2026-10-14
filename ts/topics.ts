@@ -10,7 +10,7 @@
 /** Type: `sensor_msgs/msg/Image` */
 export const CAMERA_IMAGE_RAW = "/camera/image_raw" as const;
 
-/** image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0) */
+/** native JPEG; ndvi_computation_node applies measured red radiometry before same-K undistortion, never the contrast-adjusted model input; bridge composites MJPEG and health measures receipts */
 /** Type: `sensor_msgs/msg/CompressedImage` */
 export const CAMERA_IMAGE_RAW_COMPRESSED = "/camera/image_raw/compressed" as const;
 
