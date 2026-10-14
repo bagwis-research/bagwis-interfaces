@@ -20,6 +20,7 @@ find_package(builtin_interfaces REQUIRED)
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/AdmissionStatus.msg"
   "msg/AnalyticsAssumptions.msg"
+  "msg/CameraFrameMetadata.msg"
   "msg/FinalMetrics.msg"
   "msg/FlightParams.msg"
   "msg/GeoDetection.msg"
@@ -66,6 +67,15 @@ endif()
 # C++: #include <bagwis_interfaces/topics.hpp>
 install(DIRECTORY include/ DESTINATION include)
 ament_export_include_directories(include)
+
+# Modern ament consumers use exported targets instead of the legacy include
+# variable. rosidl's targets expose only its namespaced generated headers.
+add_library(topics INTERFACE)
+target_include_directories(topics INTERFACE
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>)
+install(TARGETS topics EXPORT export_topics)
+ament_export_targets(export_topics)
 
 # Python: from bagwis_interfaces.topics import AI_NDVI
 #

@@ -23,7 +23,7 @@ surface as an `undefined` on screen during an LGU evaluation session.
 ## Layout
 
 ```
-msg/                12 messages, including the atomic segmented-detection contract
+msg/                13 messages, including camera-frame provenance
 srv/                4 services, including paired biomass export
 topics/registry.yaml    <-- the single source of truth for every topic name
 scripts/generate.py     <-- reads it, writes the three languages below
@@ -98,6 +98,52 @@ in no field here, so depending on them would force those apt packages onto
 every machine that builds this one, the Pi Zero 2 W included, for a dependency
 nothing uses. Their types are recorded in `topics/registry.yaml`; each
 consumer declares what it subscribes to.
+
+## Airborne scientific camera input: v1.2.0-rc.1
+
+Additive testing contract on `feat/nir-camera-input`, based on stable `v1.1.0`.
+The ROS package version is **1.2.0** (ROS requires numeric versions); the
+private npm package and immutable testing tag are **1.2.0-rc.1**.
+Both owners must approve before a stable release. Existing wire types and RGB
+topic names are unchanged; `bagwis-core` and `bagwis-web` have not been migrated.
+
+| Constant | Type | QoS |
+|---|---|---|
+| `CAMERA_NIR_IMAGE_RAW_COMPRESSED` | `sensor_msgs/CompressedImage` | `image_stream`: BEST_EFFORT, KEEP_LAST 1 |
+| `CAMERA_NIR_INFO` | `sensor_msgs/CameraInfo` | `default`: RELIABLE, KEEP_LAST 10 |
+| `CAMERA_NIR_FRAME_METADATA` | `CameraFrameMetadata` | `default` |
+| `CAMERA_FRAME_METADATA` | `CameraFrameMetadata` | `default` |
+
+NIR uses lossless 16-bit grayscale PNG containers, with `mono16` or an explicit
+`bayer_bggr16`, `bayer_gbrg16`, `bayer_grbg16`, or `bayer_rggb16` encoding.
+`CompressedImage.format` is `<encoding>; png compressed`. Native RAW10 samples
+remain **0–1023**, not scaled to the 16-bit range or converted to display JPEG.
+RGB retains native JPEG with `rgb8; jpeg compressed bgr8`.
+
+Each stream's image, CameraInfo and metadata share the capture `header`;
+publication time must not replace it. `source_clock` and signed
+`source_timestamp_ns` preserve the original clock value separately. Sequence
+numbers are per stream. Timestamp-reference constants distinguish unknown,
+exposure start and exposure end. Replay must set `source=file_replay`, not
+claim live sensor capture.
+
+Unknown exposure (microseconds), multiplicative analogue gain, and native
+black/white levels are **NaN**. Camera intrinsics alone do not authorize
+`radiometry_valid=true`; measured controls/levels and radiometric
+`calibration_id` provenance are required. `unfiltered_noir` is mixed-spectrum
+input, not calibrated `nir`, and cannot claim valid NIR radiometry. These
+messages supply inputs; they neither compute NDVI nor claim NIR availability
+for the core's admitted-frame pipeline.
+
+The generated TypeScript convention still represents `int64`/`uint64` as
+`number`. Nanosecond epochs exceed JavaScript's safe-integer range: use the
+header's separate seconds/nanoseconds for exact stamp joins, and C++/Python
+for exact original-clock integers.
+
+C++ topic headers now have an exported `bagwis_interfaces::topics` interface
+target as well as the legacy include-directory export, so modern
+`ament_target_dependencies(... bagwis_interfaces)` consumers find
+`<bagwis_interfaces/topics.hpp>` alongside generated message headers.
 
 ## F3.8 additive hosting contract: 1.1.0 / v1.1.0-rc.3
 
