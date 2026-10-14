@@ -60,9 +60,9 @@ topics:
     name: /camera/image_raw/compressed
     type: sensor_msgs/msg/CompressedImage
     publisher: v4l2_camera_node
-    subscribers: [preprocessing_node, rosbridge_websocket_node, health_node]
+    subscribers: [preprocessing_node, ndvi_computation_node, rosbridge_websocket_node, health_node]
     qos: image_stream
-    note: image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0)
+    note: native JPEG; ndvi_computation_node applies measured red radiometry before same-K undistortion, never the contrast-adjusted model input; bridge composites MJPEG and health measures receipts
 
   - const: CAMERA_IMAGE_PROCESSED
     name: /camera/image_processed
@@ -75,7 +75,7 @@ topics:
     name: /camera/camera_info
     type: sensor_msgs/msg/CameraInfo
     publisher: v4l2_camera_node
-    subscribers: [georeferencing_node, rosbridge_websocket_node]
+    subscribers: [ndvi_computation_node, georeferencing_node, rosbridge_websocket_node]
     qos: default
     note: intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before drawing held overlays (1.1.0)
 

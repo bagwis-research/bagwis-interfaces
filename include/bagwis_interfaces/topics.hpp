@@ -18,7 +18,7 @@ namespace topics
 /// Type: sensor_msgs/msg/Image
 inline constexpr char CAMERA_IMAGE_RAW[] = "/camera/image_raw";
 
-/// image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0)
+/// native JPEG; ndvi_computation_node applies measured red radiometry before same-K undistortion, never the contrast-adjusted model input; bridge composites MJPEG and health measures receipts
 /// Type: sensor_msgs/msg/CompressedImage
 inline constexpr char CAMERA_IMAGE_RAW_COMPRESSED[] = "/camera/image_raw/compressed";
 

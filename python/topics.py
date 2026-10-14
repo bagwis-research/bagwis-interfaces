@@ -16,9 +16,8 @@ from __future__ import annotations
 #: sensor_msgs/msg/Image
 CAMERA_IMAGE_RAW = '/camera/image_raw'
 
-# image_transport compressed plugin -- the only video crossing the radio link.
-# rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps
-# from receipts (1.1.0)
+# native JPEG; ndvi_computation_node applies measured red radiometry before same-K undistortion,
+# never the contrast-adjusted model input; bridge composites MJPEG and health measures receipts
 #: sensor_msgs/msg/CompressedImage
 CAMERA_IMAGE_RAW_COMPRESSED = '/camera/image_raw/compressed'
 
@@ -152,7 +151,12 @@ TOPICS = {
         'name': '/camera/image_raw/compressed',
         'type': 'sensor_msgs/msg/CompressedImage',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['preprocessing_node', 'rosbridge_websocket_node', 'health_node'],
+        'subscribers': [
+            'preprocessing_node',
+            'ndvi_computation_node',
+            'rosbridge_websocket_node',
+            'health_node',
+        ],
         'qos': 'image_stream',
     },
     'CAMERA_IMAGE_PROCESSED': {
@@ -166,7 +170,11 @@ TOPICS = {
         'name': '/camera/camera_info',
         'type': 'sensor_msgs/msg/CameraInfo',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['georeferencing_node', 'rosbridge_websocket_node'],
+        'subscribers': [
+            'ndvi_computation_node',
+            'georeferencing_node',
+            'rosbridge_websocket_node',
+        ],
         'qos': 'default',
     },
     'CAMERA_NIR_IMAGE_RAW_COMPRESSED': {

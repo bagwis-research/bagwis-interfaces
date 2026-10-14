@@ -99,13 +99,14 @@ every machine that builds this one, the Pi Zero 2 W included, for a dependency
 nothing uses. Their types are recorded in `topics/registry.yaml`; each
 consumer declares what it subscribes to.
 
-## Airborne scientific camera input: v1.2.0-rc.1
+## Scientific capture and NDVI handoff: v1.2.0-rc.2
 
-Additive testing contract on `feat/nir-camera-input`, based on stable `v1.1.0`.
-The ROS package version is **1.2.0** (ROS requires numeric versions); the
-private npm package and immutable testing tag are **1.2.0-rc.1**.
-Both owners must approve before a stable release. Existing wire types and RGB
-topic names are unchanged; `bagwis-core` and `bagwis-web` have not been migrated.
+Additive testing contract on `feat/ndvi-camera-integration`, based on stable
+`v1.1.0` and immutable `v1.2.0-rc.1`. ROS version is **1.2.0** (numeric);
+private npm package/testing tag is **1.2.0-rc.2**. This candidate adds NDVI's
+native RGB image/CameraInfo registry subscriptions; no wire definitions change
+from rc.1. Both owners must approve a stable release. Airborne and the isolated
+core capture/NDVI branch pin this candidate; protected core and web are unchanged.
 
 | Constant | Type | QoS |
 |---|---|---|
@@ -134,6 +135,13 @@ black/white levels are **NaN**. Camera intrinsics alone do not authorize
 input, not calibrated `nir`, and cannot claim valid NIR radiometry. These
 messages supply inputs; they neither compute NDVI nor claim NIR availability
 for the core's admitted-frame pipeline.
+
+The isolated core integration consumes original RGB red radiometry plus native
+NIR, exact capture triplets and admitted native-plane segmentation masks.
+Source metadata is not authorization to infer NDVI from unfiltered NoIR,
+display previews or model input. Real ROS software scenarios exercised all five
+NIR encodings, exposure/gain correction, nonidentity registration and aligned
+unavailable acknowledgments; physical capture/calibration is not established.
 
 The generated TypeScript convention still represents `int64`/`uint64` as
 `number`. Nanosecond epochs exceed JavaScript's safe-integer range: use the

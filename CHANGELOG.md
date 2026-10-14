@@ -32,6 +32,21 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 - Publication was authorized by JoshuaHM-p4; no review by EarlClydeeee is
   recorded on the contract PRs (README step 4 asks for both owners). Field
   acceptance remains separate.
+## [1.2.0-rc.2] — 2026-10-14
+
+Registry-only successor to immutable `v1.2.0-rc.1`; ROS remains 1.2.0, private
+npm package/tag is 1.2.0-rc.2. No message/service wire changes.
+
+- Add `ndvi_computation_node` subscribers to native RGB compressed image and
+  CameraInfo. Clarify that red radiometry uses original JPEG, not model input.
+- Regenerate topic constants and coordinate airborne/isolated core testing pins.
+  Protected core and web remain untouched. Stable publication still requires
+  both interface owners' approvals.
+- Generator freshness/TypeScript verification and Jazzy interface build passed.
+  Actual camera/NDVI executables exercised mono16 plus all Bayer16 orientations:
+  calibrated analytic results, exposure/gain changes, translated registration,
+  class-0 mask union and unfiltered/unknown/missing NIR unavailable responses.
+  This is software evidence, not physical sensor or calibration qualification.
 ## [1.2.0-rc.1] — 2026-10-14
 
 Additive prerelease based on `v1.1.0`; stable publication still requires both
