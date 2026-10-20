@@ -93,6 +93,10 @@ inline constexpr char MAVROS_RANGEFINDER[] = "/mavros/distance_sensor/rangefinde
 /// Type: mavros_msgs/msg/WaypointList
 inline constexpr char MAVROS_WAYPOINTS[] = "/mavros/mission/waypoints";
 
+/// host-local CPU, thermal, storage and chrony-correction input; health_node remains the sole dashboard aggregate publisher
+/// Type: bagwis_interfaces/msg/AirborneHealth
+inline constexpr char AIRBORNE_HEALTH[] = "/airborne/health";
+
 /// Type: bagwis_interfaces/msg/FinalMetrics
 inline constexpr char DASHBOARD_FINAL_METRICS[] = "/dashboard/final_metrics";
 

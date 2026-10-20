@@ -14,6 +14,31 @@ Consumers pin a tag, never a branch. CI fails when a file under `msg/` or `srv/`
 changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
+## [1.3.0-rc.1] — 2026-10-20
+
+Additive testing candidate based on `v1.2.0-rc.2`; ROS package version is
+1.3.0 and the private npm package/tag is 1.3.0-rc.1. Stable publication still
+requires both interface owners.
+
+### Added
+
+- `AirborneHealth` and the reliable `/airborne/health` registry entry. It is a
+  versioned host-measurement input from `airborne_health_node` to `health_node`;
+  `health_node` remains the sole `/dashboard/system_health` publisher.
+- CPU, configured thermal-zone temperature, signed chrony remaining correction,
+  and storage available to the running user. Unavailable numerics stay NaN and
+  warnings describe the current sample only.
+
+### Compatibility
+
+`SystemHealth` and existing camera wire layouts are unchanged. This candidate
+intentionally retains the `v1.2.0-rc.2` camera metadata contract rather than
+rebasing onto the older stable interface main. Airborne and core consumers must
+pin this exact immutable tag; neither stable interface publication nor hardware
+calibration/thermal qualification is implied.
+
+---
+
 
 ## [1.2.0-rc.2] — 2026-10-14
 

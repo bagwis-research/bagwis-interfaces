@@ -98,6 +98,11 @@ MAVROS_RANGEFINDER = '/mavros/distance_sensor/rangefinder'
 #: mavros_msgs/msg/WaypointList
 MAVROS_WAYPOINTS = '/mavros/mission/waypoints'
 
+# host-local CPU, thermal, storage and chrony-correction input; health_node remains the sole
+# dashboard aggregate publisher
+#: bagwis_interfaces/msg/AirborneHealth
+AIRBORNE_HEALTH = '/airborne/health'
+
 #: bagwis_interfaces/msg/FinalMetrics
 DASHBOARD_FINAL_METRICS = '/dashboard/final_metrics'
 
@@ -299,6 +304,13 @@ TOPICS = {
         'type': 'mavros_msgs/msg/WaypointList',
         'publisher': 'rosbridge_websocket_node',
         'subscribers': ['mavros_node'],
+        'qos': 'default',
+    },
+    'AIRBORNE_HEALTH': {
+        'name': '/airborne/health',
+        'type': 'bagwis_interfaces/msg/AirborneHealth',
+        'publisher': 'airborne_health_node',
+        'subscribers': ['health_node'],
         'qos': 'default',
     },
     'DASHBOARD_FINAL_METRICS': {
