@@ -14,7 +14,18 @@ Consumers pin a tag, never a branch. CI fails when a file under `msg/` or `srv/`
 changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
+## [1.3.0-rc.2] — 2026-10-20
+
+Registry/message-generation correction to immutable `v1.3.0-rc.1`. The prior
+candidate's CMake message list omitted existing `CameraFrameMetadata`, so it
+could not build the retained camera contract alongside `AirborneHealth`.
+`v1.3.0-rc.2` retains all `v1.2.0-rc.2` camera wire layouts and adds
+`AirborneHealth`; ROS remains 1.3.0 and private npm/package tag is 1.3.0-rc.2.
+
+---
+
 ## [1.3.0-rc.1] — 2026-10-20
+
 
 Additive testing candidate based on `v1.2.0-rc.2`; ROS package version is
 1.3.0 and the private npm package/tag is 1.3.0-rc.1. Stable publication still
