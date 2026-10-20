@@ -19,8 +19,8 @@ find_package(builtin_interfaces REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/AdmissionStatus.msg"
+  "msg/AirborneHealth.msg"
   "msg/AnalyticsAssumptions.msg"
-  "msg/CameraFrameMetadata.msg"
   "msg/FinalMetrics.msg"
   "msg/FlightParams.msg"
   "msg/GeoDetection.msg"

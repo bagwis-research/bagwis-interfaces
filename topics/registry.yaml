@@ -215,6 +215,16 @@ topics:
     qos: default
     note: uplink -- waypoint guard vetoes >120 m AGL (T1.2.5)
 
+
+  # --- Airborne host monitoring ---
+
+  - const: AIRBORNE_HEALTH
+    name: /airborne/health
+    type: bagwis_interfaces/msg/AirborneHealth
+    publisher: airborne_health_node
+    subscribers: [health_node]
+    qos: default
+    note: host-local CPU, thermal, storage and chrony-correction input; health_node remains the sole dashboard aggregate publisher
   # --- Layer 4: dashboard (SRS-00 SS3, SS4) ---
 
   - const: DASHBOARD_FINAL_METRICS

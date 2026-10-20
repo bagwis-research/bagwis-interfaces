@@ -85,6 +85,10 @@ export const MAVROS_RANGEFINDER = "/mavros/distance_sensor/rangefinder" as const
 /** Type: `mavros_msgs/msg/WaypointList` */
 export const MAVROS_WAYPOINTS = "/mavros/mission/waypoints" as const;
 
+/** host-local CPU, thermal, storage and chrony-correction input; health_node remains the sole dashboard aggregate publisher */
+/** Type: `bagwis_interfaces/msg/AirborneHealth` */
+export const AIRBORNE_HEALTH = "/airborne/health" as const;
+
 /** Type: `bagwis_interfaces/msg/FinalMetrics` */
 export const DASHBOARD_FINAL_METRICS = "/dashboard/final_metrics" as const;
 
@@ -143,6 +147,7 @@ export const ALL_TOPICS = [
   MAVROS_BATTERY,
   MAVROS_RANGEFINDER,
   MAVROS_WAYPOINTS,
+  AIRBORNE_HEALTH,
   DASHBOARD_FINAL_METRICS,
   DASHBOARD_SAFETY_ALERTS,
   DASHBOARD_SYSTEM_HEALTH,
