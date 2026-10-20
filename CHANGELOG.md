@@ -14,6 +14,42 @@ Consumers pin a tag, never a branch. CI fails when a file under `msg/` or `srv/`
 changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
+## [1.3.0-rc.2] — 2026-10-20
+
+Registry/message-generation correction to immutable `v1.3.0-rc.1`. The prior
+candidate's CMake message list omitted existing `CameraFrameMetadata`, so it
+could not build the retained camera contract alongside `AirborneHealth`.
+`v1.3.0-rc.2` retains all `v1.2.0-rc.2` camera wire layouts and adds
+`AirborneHealth`; ROS remains 1.3.0 and private npm/package tag is 1.3.0-rc.2.
+
+---
+
+## [1.3.0-rc.1] — 2026-10-20
+
+
+Additive testing candidate based on `v1.2.0-rc.2`; ROS package version is
+1.3.0 and the private npm package/tag is 1.3.0-rc.1. Stable publication still
+requires both interface owners.
+
+### Added
+
+- `AirborneHealth` and the reliable `/airborne/health` registry entry. It is a
+  versioned host-measurement input from `airborne_health_node` to `health_node`;
+  `health_node` remains the sole `/dashboard/system_health` publisher.
+- CPU, configured thermal-zone temperature, signed chrony remaining correction,
+  and storage available to the running user. Unavailable numerics stay NaN and
+  warnings describe the current sample only.
+
+### Compatibility
+
+`SystemHealth` and existing camera wire layouts are unchanged. This candidate
+intentionally retains the `v1.2.0-rc.2` camera metadata contract rather than
+rebasing onto the older stable interface main. Airborne and core consumers must
+pin this exact immutable tag; neither stable interface publication nor hardware
+calibration/thermal qualification is implied.
+
+---
+
 
 ## [1.1.0] — 2026-10-11
 
@@ -32,6 +68,56 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 - Publication was authorized by JoshuaHM-p4; no review by EarlClydeeee is
   recorded on the contract PRs (README step 4 asks for both owners). Field
   acceptance remains separate.
+## [1.2.0-rc.2] — 2026-10-14
+
+Registry-only successor to immutable `v1.2.0-rc.1`; ROS remains 1.2.0, private
+npm package/tag is 1.2.0-rc.2. No message/service wire changes.
+
+- Add `ndvi_computation_node` subscribers to native RGB compressed image and
+  CameraInfo. Clarify that red radiometry uses original JPEG, not model input.
+- Regenerate topic constants and coordinate airborne/isolated core testing pins.
+  Protected core and web remain untouched. Stable publication still requires
+  both interface owners' approvals.
+- Generator freshness/TypeScript verification and Jazzy interface build passed.
+  Actual camera/NDVI executables exercised mono16 plus all Bayer16 orientations:
+  calibrated analytic results, exposure/gain changes, translated registration,
+  class-0 mask union and unfiltered/unknown/missing NIR unavailable responses.
+  This is software evidence, not physical sensor or calibration qualification.
+## [1.2.0-rc.1] — 2026-10-14
+
+Additive prerelease based on `v1.1.0`; stable publication still requires both
+owners' approvals. ROS version 1.2.0; private npm version 1.2.0-rc.1.
+
+### Added
+
+- `CameraFrameMetadata`: capture header, per-stream sequence, explicit source
+  and clock, original signed nanosecond timestamp/reference, encoding/native
+  bit depth, spectral band, measured exposure/gain/levels and radiometric
+  validity/provenance. Unknown controls are NaN, not invented zeroes.
+- Lossless NIR compressed-frame, CameraInfo and metadata registry entries,
+  plus RGB frame metadata. NIR PNG preserves native 10–16-bit sample values
+  and explicit Bayer orientation; it is not the contrast/gamma-adjusted
+  browser preview. Frame QoS remains best-effort depth 1; info/metadata use
+  reliable depth 10.
+- Generated C++, Python and TypeScript constants and metadata types.
+
+### Fixed
+
+- Export the canonical topic-header include directory through an interface
+  target. Modern ament target consumers previously received only rosidl's
+  nested generated-header path and could not include `topics.hpp`.
+
+### Consumers and verification
+
+`bagwis-airborne` pins this candidate for its C++ Jazzy file-replay camera
+component. Existing RGB topics and wire types are unchanged. Neither the
+protected `bagwis-core` checkout nor `bagwis-web` is changed; their scientific
+NIR consumption is a later integration step.
+
+Jazzy build, generated-output check and TypeScript typecheck passed. Real ROS
+subscribers and the standard compressed-image decoder recovered all four
+synthetic RAW10 Bayer frames exactly, with source stamps retained. Replay
+does not prove physical NIR capture, calibration or NDVI.
 
 ---
 

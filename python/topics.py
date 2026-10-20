@@ -16,9 +16,8 @@ from __future__ import annotations
 #: sensor_msgs/msg/Image
 CAMERA_IMAGE_RAW = '/camera/image_raw'
 
-# image_transport compressed plugin -- the only video crossing the radio link.
-# rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps
-# from receipts (1.1.0)
+# native JPEG; ndvi_computation_node applies measured red radiometry before same-K undistortion,
+# never the contrast-adjusted model input; bridge composites MJPEG and health measures receipts
 #: sensor_msgs/msg/CompressedImage
 CAMERA_IMAGE_RAW_COMPRESSED = '/camera/image_raw/compressed'
 
@@ -29,6 +28,18 @@ CAMERA_IMAGE_PROCESSED = '/camera/image_processed'
 # drawing held overlays (1.1.0)
 #: sensor_msgs/msg/CameraInfo
 CAMERA_INFO = '/camera/camera_info'
+
+#: sensor_msgs/msg/CompressedImage
+CAMERA_NIR_IMAGE_RAW_COMPRESSED = '/camera/nir/image_raw/compressed'
+
+#: sensor_msgs/msg/CameraInfo
+CAMERA_NIR_INFO = '/camera/nir/camera_info'
+
+#: bagwis_interfaces/msg/CameraFrameMetadata
+CAMERA_NIR_FRAME_METADATA = '/camera/nir/frame_metadata'
+
+#: bagwis_interfaces/msg/CameraFrameMetadata
+CAMERA_FRAME_METADATA = '/camera/frame_metadata'
 
 # every inferred frame before admission; georeferencing counts unique capture stamps only, so a
 # depth-1 queue that drops one burst-delivered set breaks the count (sensor_data keeps history 5);
@@ -87,6 +98,11 @@ MAVROS_RANGEFINDER = '/mavros/distance_sensor/rangefinder'
 #: mavros_msgs/msg/WaypointList
 MAVROS_WAYPOINTS = '/mavros/mission/waypoints'
 
+# host-local CPU, thermal, storage and chrony-correction input; health_node remains the sole
+# dashboard aggregate publisher
+#: bagwis_interfaces/msg/AirborneHealth
+AIRBORNE_HEALTH = '/airborne/health'
+
 #: bagwis_interfaces/msg/FinalMetrics
 DASHBOARD_FINAL_METRICS = '/dashboard/final_metrics'
 
@@ -140,7 +156,12 @@ TOPICS = {
         'name': '/camera/image_raw/compressed',
         'type': 'sensor_msgs/msg/CompressedImage',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['preprocessing_node', 'rosbridge_websocket_node', 'health_node'],
+        'subscribers': [
+            'preprocessing_node',
+            'ndvi_computation_node',
+            'rosbridge_websocket_node',
+            'health_node',
+        ],
         'qos': 'image_stream',
     },
     'CAMERA_IMAGE_PROCESSED': {
@@ -154,7 +175,39 @@ TOPICS = {
         'name': '/camera/camera_info',
         'type': 'sensor_msgs/msg/CameraInfo',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['georeferencing_node', 'rosbridge_websocket_node'],
+        'subscribers': [
+            'ndvi_computation_node',
+            'georeferencing_node',
+            'rosbridge_websocket_node',
+        ],
+        'qos': 'default',
+    },
+    'CAMERA_NIR_IMAGE_RAW_COMPRESSED': {
+        'name': '/camera/nir/image_raw/compressed',
+        'type': 'sensor_msgs/msg/CompressedImage',
+        'publisher': 'v4l2_camera_node',
+        'subscribers': ['ndvi_computation_node'],
+        'qos': 'image_stream',
+    },
+    'CAMERA_NIR_INFO': {
+        'name': '/camera/nir/camera_info',
+        'type': 'sensor_msgs/msg/CameraInfo',
+        'publisher': 'v4l2_camera_node',
+        'subscribers': ['ndvi_computation_node'],
+        'qos': 'default',
+    },
+    'CAMERA_NIR_FRAME_METADATA': {
+        'name': '/camera/nir/frame_metadata',
+        'type': 'bagwis_interfaces/msg/CameraFrameMetadata',
+        'publisher': 'v4l2_camera_node',
+        'subscribers': ['ndvi_computation_node'],
+        'qos': 'default',
+    },
+    'CAMERA_FRAME_METADATA': {
+        'name': '/camera/frame_metadata',
+        'type': 'bagwis_interfaces/msg/CameraFrameMetadata',
+        'publisher': 'v4l2_camera_node',
+        'subscribers': ['ndvi_computation_node'],
         'qos': 'default',
     },
     'AI_DETECTIONS_RAW': {
@@ -251,6 +304,13 @@ TOPICS = {
         'type': 'mavros_msgs/msg/WaypointList',
         'publisher': 'rosbridge_websocket_node',
         'subscribers': ['mavros_node'],
+        'qos': 'default',
+    },
+    'AIRBORNE_HEALTH': {
+        'name': '/airborne/health',
+        'type': 'bagwis_interfaces/msg/AirborneHealth',
+        'publisher': 'airborne_health_node',
+        'subscribers': ['health_node'],
         'qos': 'default',
     },
     'DASHBOARD_FINAL_METRICS': {

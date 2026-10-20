@@ -18,7 +18,7 @@ namespace topics
 /// Type: sensor_msgs/msg/Image
 inline constexpr char CAMERA_IMAGE_RAW[] = "/camera/image_raw";
 
-/// image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0)
+/// native JPEG; ndvi_computation_node applies measured red radiometry before same-K undistortion, never the contrast-adjusted model input; bridge composites MJPEG and health measures receipts
 /// Type: sensor_msgs/msg/CompressedImage
 inline constexpr char CAMERA_IMAGE_RAW_COMPRESSED[] = "/camera/image_raw/compressed";
 
@@ -28,6 +28,18 @@ inline constexpr char CAMERA_IMAGE_PROCESSED[] = "/camera/image_processed";
 /// intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before drawing held overlays (1.1.0)
 /// Type: sensor_msgs/msg/CameraInfo
 inline constexpr char CAMERA_INFO[] = "/camera/camera_info";
+
+/// Type: sensor_msgs/msg/CompressedImage
+inline constexpr char CAMERA_NIR_IMAGE_RAW_COMPRESSED[] = "/camera/nir/image_raw/compressed";
+
+/// Type: sensor_msgs/msg/CameraInfo
+inline constexpr char CAMERA_NIR_INFO[] = "/camera/nir/camera_info";
+
+/// Type: bagwis_interfaces/msg/CameraFrameMetadata
+inline constexpr char CAMERA_NIR_FRAME_METADATA[] = "/camera/nir/frame_metadata";
+
+/// Type: bagwis_interfaces/msg/CameraFrameMetadata
+inline constexpr char CAMERA_FRAME_METADATA[] = "/camera/frame_metadata";
 
 /// every inferred frame before admission; georeferencing counts unique capture stamps only, so a depth-1 queue that drops one burst-delivered set breaks the count (sensor_data keeps history 5); rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0)
 /// Type: bagwis_interfaces/msg/SegmentedDetectionArray
@@ -80,6 +92,10 @@ inline constexpr char MAVROS_RANGEFINDER[] = "/mavros/distance_sensor/rangefinde
 /// uplink -- waypoint guard vetoes >120 m AGL (T1.2.5)
 /// Type: mavros_msgs/msg/WaypointList
 inline constexpr char MAVROS_WAYPOINTS[] = "/mavros/mission/waypoints";
+
+/// host-local CPU, thermal, storage and chrony-correction input; health_node remains the sole dashboard aggregate publisher
+/// Type: bagwis_interfaces/msg/AirborneHealth
+inline constexpr char AIRBORNE_HEALTH[] = "/airborne/health";
 
 /// Type: bagwis_interfaces/msg/FinalMetrics
 inline constexpr char DASHBOARD_FINAL_METRICS[] = "/dashboard/final_metrics";

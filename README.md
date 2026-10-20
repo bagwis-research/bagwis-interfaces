@@ -23,7 +23,7 @@ surface as an `undefined` on screen during an LGU evaluation session.
 ## Layout
 
 ```
-msg/                12 messages, including the atomic segmented-detection contract
+msg/                13 messages, including camera-frame provenance
 srv/                4 services, including paired biomass export
 topics/registry.yaml    <-- the single source of truth for every topic name
 scripts/generate.py     <-- reads it, writes the three languages below
@@ -99,7 +99,61 @@ every machine that builds this one, the Pi Zero 2 W included, for a dependency
 nothing uses. Their types are recorded in `topics/registry.yaml`; each
 consumer declares what it subscribes to.
 
-## F3.8 additive hosting contract: 1.1.0 (stable `v1.1.0`)
+## Scientific capture and NDVI handoff: v1.2.0-rc.2
+
+Additive testing contract on `feat/ndvi-camera-integration`, based on stable
+`v1.1.0` and immutable `v1.2.0-rc.1`. ROS version is **1.2.0** (numeric);
+private npm package/testing tag is **1.2.0-rc.2**. This candidate adds NDVI's
+native RGB image/CameraInfo registry subscriptions; no wire definitions change
+from rc.1. Both owners must approve a stable release. Airborne and the isolated
+core capture/NDVI branch pin this candidate; protected core and web are unchanged.
+
+| Constant | Type | QoS |
+|---|---|---|
+| `CAMERA_NIR_IMAGE_RAW_COMPRESSED` | `sensor_msgs/CompressedImage` | `image_stream`: BEST_EFFORT, KEEP_LAST 1 |
+| `CAMERA_NIR_INFO` | `sensor_msgs/CameraInfo` | `default`: RELIABLE, KEEP_LAST 10 |
+| `CAMERA_NIR_FRAME_METADATA` | `CameraFrameMetadata` | `default` |
+| `CAMERA_FRAME_METADATA` | `CameraFrameMetadata` | `default` |
+
+NIR uses lossless 16-bit grayscale PNG containers, with `mono16` or an explicit
+`bayer_bggr16`, `bayer_gbrg16`, `bayer_grbg16`, or `bayer_rggb16` encoding.
+`CompressedImage.format` is `<encoding>; png compressed`. Native RAW10 samples
+remain **0–1023**, not scaled to the 16-bit range or converted to display JPEG.
+RGB retains native JPEG with `rgb8; jpeg compressed bgr8`.
+
+Each stream's image, CameraInfo and metadata share the capture `header`;
+publication time must not replace it. `source_clock` and signed
+`source_timestamp_ns` preserve the original clock value separately. Sequence
+numbers are per stream. Timestamp-reference constants distinguish unknown,
+exposure start and exposure end. Replay must set `source=file_replay`, not
+claim live sensor capture.
+
+Unknown exposure (microseconds), multiplicative analogue gain, and native
+black/white levels are **NaN**. Camera intrinsics alone do not authorize
+`radiometry_valid=true`; measured controls/levels and radiometric
+`calibration_id` provenance are required. `unfiltered_noir` is mixed-spectrum
+input, not calibrated `nir`, and cannot claim valid NIR radiometry. These
+messages supply inputs; they neither compute NDVI nor claim NIR availability
+for the core's admitted-frame pipeline.
+
+The isolated core integration consumes original RGB red radiometry plus native
+NIR, exact capture triplets and admitted native-plane segmentation masks.
+Source metadata is not authorization to infer NDVI from unfiltered NoIR,
+display previews or model input. Real ROS software scenarios exercised all five
+NIR encodings, exposure/gain correction, nonidentity registration and aligned
+unavailable acknowledgments; physical capture/calibration is not established.
+
+The generated TypeScript convention still represents `int64`/`uint64` as
+`number`. Nanosecond epochs exceed JavaScript's safe-integer range: use the
+header's separate seconds/nanoseconds for exact stamp joins, and C++/Python
+for exact original-clock integers.
+
+C++ topic headers now have an exported `bagwis_interfaces::topics` interface
+target as well as the legacy include-directory export, so modern
+`ament_target_dependencies(... bagwis_interfaces)` consumers find
+`<bagwis_interfaces/topics.hpp>` alongside generated message headers.
+
+## F3.8 additive hosting contract: 1.1.0 / v1.1.0-rc.3
 
 ROS and npm package versions are **1.1.0**. The stable
 [`v1.1.0` release](https://github.com/bagwis-research/bagwis-interfaces/releases/tag/v1.1.0)

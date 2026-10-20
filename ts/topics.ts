@@ -10,7 +10,7 @@
 /** Type: `sensor_msgs/msg/Image` */
 export const CAMERA_IMAGE_RAW = "/camera/image_raw" as const;
 
-/** image_transport compressed plugin -- the only video crossing the radio link. rosbridge_websocket_node composites the MJPEG feed from it; health_node measures downlink_fps from receipts (1.1.0) */
+/** native JPEG; ndvi_computation_node applies measured red radiometry before same-K undistortion, never the contrast-adjusted model input; bridge composites MJPEG and health measures receipts */
 /** Type: `sensor_msgs/msg/CompressedImage` */
 export const CAMERA_IMAGE_RAW_COMPRESSED = "/camera/image_raw/compressed" as const;
 
@@ -20,6 +20,18 @@ export const CAMERA_IMAGE_PROCESSED = "/camera/image_processed" as const;
 /** intrinsics for GSD; rosbridge_websocket_node undistorts the MJPEG frame with the same K before drawing held overlays (1.1.0) */
 /** Type: `sensor_msgs/msg/CameraInfo` */
 export const CAMERA_INFO = "/camera/camera_info" as const;
+
+/** Type: `sensor_msgs/msg/CompressedImage` */
+export const CAMERA_NIR_IMAGE_RAW_COMPRESSED = "/camera/nir/image_raw/compressed" as const;
+
+/** Type: `sensor_msgs/msg/CameraInfo` */
+export const CAMERA_NIR_INFO = "/camera/nir/camera_info" as const;
+
+/** Type: `bagwis_interfaces/msg/CameraFrameMetadata` */
+export const CAMERA_NIR_FRAME_METADATA = "/camera/nir/frame_metadata" as const;
+
+/** Type: `bagwis_interfaces/msg/CameraFrameMetadata` */
+export const CAMERA_FRAME_METADATA = "/camera/frame_metadata" as const;
 
 /** every inferred frame before admission; georeferencing counts unique capture stamps only, so a depth-1 queue that drops one burst-delivered set breaks the count (sensor_data keeps history 5); rosbridge_websocket_node holds the latest valid set as the MJPEG overlay; health_node measures inference receipt (1.1.0) */
 /** Type: `bagwis_interfaces/msg/SegmentedDetectionArray` */
@@ -73,6 +85,10 @@ export const MAVROS_RANGEFINDER = "/mavros/distance_sensor/rangefinder" as const
 /** Type: `mavros_msgs/msg/WaypointList` */
 export const MAVROS_WAYPOINTS = "/mavros/mission/waypoints" as const;
 
+/** host-local CPU, thermal, storage and chrony-correction input; health_node remains the sole dashboard aggregate publisher */
+/** Type: `bagwis_interfaces/msg/AirborneHealth` */
+export const AIRBORNE_HEALTH = "/airborne/health" as const;
+
 /** Type: `bagwis_interfaces/msg/FinalMetrics` */
 export const DASHBOARD_FINAL_METRICS = "/dashboard/final_metrics" as const;
 
@@ -114,6 +130,10 @@ export const ALL_TOPICS = [
   CAMERA_IMAGE_RAW_COMPRESSED,
   CAMERA_IMAGE_PROCESSED,
   CAMERA_INFO,
+  CAMERA_NIR_IMAGE_RAW_COMPRESSED,
+  CAMERA_NIR_INFO,
+  CAMERA_NIR_FRAME_METADATA,
+  CAMERA_FRAME_METADATA,
   AI_DETECTIONS_RAW,
   AI_DETECTIONS,
   AI_NDVI,
@@ -127,6 +147,7 @@ export const ALL_TOPICS = [
   MAVROS_BATTERY,
   MAVROS_RANGEFINDER,
   MAVROS_WAYPOINTS,
+  AIRBORNE_HEALTH,
   DASHBOARD_FINAL_METRICS,
   DASHBOARD_SAFETY_ALERTS,
   DASHBOARD_SYSTEM_HEALTH,
