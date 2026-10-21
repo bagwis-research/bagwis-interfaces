@@ -26,6 +26,7 @@ export interface FinalMetrics {
   total_waste_area_m2: number;
   total_volume_m3: number;
   total_truck_loads: number;
+  truck_capacity_m3: number;
   total_wet_biomass_kg: number;
   max_rwor_pct: number;
   max_rwor_location: GeoPoint;

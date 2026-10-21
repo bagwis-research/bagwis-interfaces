@@ -22,7 +22,7 @@ export interface ObstructionCluster {
   area_m2: number;
   /** O-4: classes 1-4 union area x mat depth */
   volume_m3: number;
-  /** O-5: waste volume / truck capacity; fractional equivalents */
+  /** O-5: volume_m3 / FinalMetrics.truck_capacity_m3; fractional */
   truck_loads: number;
   /** O-6: class-0 union area x hyacinth density, even without NIR */
   wet_biomass_kg: number;
