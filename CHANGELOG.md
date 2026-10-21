@@ -14,6 +14,40 @@ Consumers pin a tag, never a branch. CI fails when a file under `msg/` or `srv/`
 changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
+## [1.4.0-rc.1] — 2026-10-21
+
+Additive testing candidate based on `v1.3.0-rc.2` (minor bump, FR-IF-05); ROS
+package version is 1.4.0 and the private npm package/tag is 1.4.0-rc.1. The
+dump-truck capacity V_truck becomes an operator setting owned by
+`georeferencing_node`; the dashboard edits it and displays the result, and
+computes nothing (FR-WEB-24). Its default stays 6.0 m3, the manuscript Table 5
+assumption. No field, name or type of 1.3.0 changes.
+
+### Added
+
+- `AnalyticsAssumptions.truck_capacity_source`: where the active V_truck comes
+  from, so the dashboard and the CSV/KML exports can cite it beside the value.
+- `AnalyticsAssumptions.assumptions_updated_at`: when the active analytic
+  constants last changed, read from the mission registry's change log.
+- `FinalMetrics.truck_capacity_m3`: the V_truck that this message's
+  `truck_loads` were divided by. A consumer waiting for a capacity change to
+  take effect compares it here rather than racing the separate assumptions
+  topic.
+
+### Changed
+
+- `ObstructionCluster.truck_loads` comment names the divisor field; the
+  `AnalyticsAssumptions.truck_capacity_m3` comment states the settable range.
+
+### Compatibility
+
+Wire layouts of `FinalMetrics` and `AnalyticsAssumptions` change, so a
+`snapshot.cdr` written with 1.3.0 does not deserialize as 1.4.0; core's
+`GetMissionState` already answers only from a readable snapshot. Core and web
+must re-pin together. Airborne publishes neither message and may stay on its
+pin.
+
+---
 ## [1.3.0-rc.2] — 2026-10-20
 
 Registry/message-generation correction to immutable `v1.3.0-rc.1`. The prior

@@ -17,6 +17,10 @@ float32  total_hyacinth_area_m2      # class-0 union across clusters
 float32  total_waste_area_m2         # classes 1-4 union across clusters; excludes unknown 255
 float32  total_volume_m3
 float32  total_truck_loads
+# V_truck that every truck_loads in this message was divided by. It travels with
+# the metrics, not only on /dashboard/assumptions, so a reader can tell whether
+# a message already reflects a capacity change.
+float32  truck_capacity_m3
 float32  total_wet_biomass_kg
 float32  max_rwor_pct
 geographic_msgs/GeoPoint max_rwor_location

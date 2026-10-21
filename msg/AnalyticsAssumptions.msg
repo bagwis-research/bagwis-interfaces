@@ -11,7 +11,11 @@
 std_msgs/Header header
 
 float32  mat_depth_m                # D_avg,      default 0.15
-float32  truck_capacity_m3          # V_truck,    default 6.0
+float32  truck_capacity_m3          # V_truck,    default 6.0; settable at runtime, [1.0, 40.0]
+# Where the active V_truck comes from: the configured source (default
+# "Manuscript Table 5 (project assumption)") or "Operator setting" after an
+# accepted runtime change. Shown beside the value and in the exports.
+string   truck_capacity_source
 float32  hyacinth_density_kg_m2     # W_density,  default 40.0
 float32  confidence_threshold
 float32  kde_bandwidth_m
@@ -25,3 +29,7 @@ string   river_profile_revision     # actual survey/data revision
 # static targets, NIR-independent area-derived biomass, fractional truck
 # equivalents and actual KDE grid spacing.
 string   citation_note
+# When the active analytic constants last changed: the latest accepted runtime
+# change, or the first value this mission ran with. Wall-clock (UTC) time, from
+# the mission registry's change log, so it survives a node restart.
+builtin_interfaces/Time assumptions_updated_at
