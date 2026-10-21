@@ -6,14 +6,15 @@
 // Edit the source and re-run scripts/generate.py. CI fails if the committed
 // output does not match what the generator produces (FR-IF-03, FR-IF-06).
 
-import type { Header } from "./_external";
+import type { Header, Time } from "./_external";
 
 export interface AnalyticsAssumptions {
   header: Header;
   /** D_avg,      default 0.15 */
   mat_depth_m: number;
-  /** V_truck,    default 6.0 */
+  /** V_truck,    default 6.0; settable at runtime, [1.0, 40.0] */
   truck_capacity_m3: number;
+  truck_capacity_source: string;
   /** W_density,  default 40.0 */
   hyacinth_density_kg_m2: number;
   confidence_threshold: number;
@@ -30,4 +31,5 @@ export interface AnalyticsAssumptions {
   /** actual survey/data revision */
   river_profile_revision: string;
   citation_note: string;
+  assumptions_updated_at: Time;
 }

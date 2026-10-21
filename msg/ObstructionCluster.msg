@@ -16,7 +16,7 @@ geographic_msgs/GeoPoint[] hull
 
 float32  area_m2                    # O-3: union across all class layers, not their sum
 float32  volume_m3                  # O-4: classes 1-4 union area x mat depth
-float32  truck_loads                # O-5: waste volume / truck capacity; fractional equivalents
+float32  truck_loads                # O-5: volume_m3 / FinalMetrics.truck_capacity_m3; fractional
 float32  wet_biomass_kg             # O-6: class-0 union area x hyacinth density, even without NIR
 float32  rwor_pct                   # O-7: class-0 obstruction only
 float32  river_width_m              # RWOR denominator, for auditability
