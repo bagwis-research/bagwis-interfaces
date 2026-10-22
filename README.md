@@ -12,6 +12,13 @@ Specified by [`SRS-00-interfaces.md`](https://github.com/bagwis-research/bagwis-
 | **Consumers** | `bagwis-airborne`, `bagwis-core`, `bagwis-web` |
 | **Consumed as** | git submodule pinned to a **tag**, never a branch (FR-IF-04) |
 
+This private combined testing candidate is `v1.4.0-rc.2` (npm `1.4.0-rc.2`,
+ROS numeric `1.4.0`). It stacks registry-only preview additions on `a070edf`
+from `origin/feat/truck-capacity-setting`; interface PR #13 remains open.
+Core and web must pin the same immutable candidate. No camera metadata or
+truck-capacity wire layout changes from the truck candidate are introduced,
+and the physical Zero's camera interface pin need not change.
+
 ## Optional raw NoIR display consumer
 
 `camera_preview_receiver` is registered on the three existing native NIR

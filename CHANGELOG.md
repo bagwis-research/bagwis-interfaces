@@ -14,7 +14,12 @@ Consumers pin a tag, never a branch. CI fails when a file under `msg/` or `srv/`
 changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
-## [Unreleased] — 2026-10-22
+## [1.4.0-rc.2] — 2026-10-22
+
+Registry-only testing successor to `1.4.0-rc.1`. ROS remains numeric `1.4.0`;
+the private npm package/lockfile and immutable local testing tag advance to
+`1.4.0-rc.2`. No additional field, message or service changes require another
+ROS minor version. This candidate is not published or stable.
 
 ### Added
 
