@@ -34,8 +34,13 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
   calibrated NIR measurement documented in the existing README. Generated
   Python/C++/TypeScript registry constants are committed with this change.
 
-This local integration revision is not a stable release or physical calibration
-qualification; runtime verification belongs to consuming repositories.
+This local registry-only integration is stacked on `a070edf` from
+`origin/feat/truck-capacity-setting`; interface PR #13 remains open. It retains
+the 1.4.0 truck-capacity wire fields and the existing camera metadata unchanged,
+so the physical Zero's camera publishers need no pin change. Core and web use
+the same immutable combined commit during integration. This is not a stable
+release or physical calibration qualification; runtime verification belongs to
+consuming repositories.
 
 ---
 
