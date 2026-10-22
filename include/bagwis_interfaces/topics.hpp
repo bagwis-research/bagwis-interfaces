@@ -29,6 +29,7 @@ inline constexpr char CAMERA_IMAGE_PROCESSED[] = "/camera/image_processed";
 /// Type: sensor_msgs/msg/CameraInfo
 inline constexpr char CAMERA_INFO[] = "/camera/camera_info";
 
+/// camera_preview_receiver is opt-in display-only raw NoIR; never republishes RGB or science topics
 /// Type: sensor_msgs/msg/CompressedImage
 inline constexpr char CAMERA_NIR_IMAGE_RAW_COMPRESSED[] = "/camera/nir/image_raw/compressed";
 

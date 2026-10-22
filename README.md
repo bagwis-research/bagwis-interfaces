@@ -12,6 +12,16 @@ Specified by [`SRS-00-interfaces.md`](https://github.com/bagwis-research/bagwis-
 | **Consumers** | `bagwis-airborne`, `bagwis-core`, `bagwis-web` |
 | **Consumed as** | git submodule pinned to a **tag**, never a branch (FR-IF-04) |
 
+## Optional raw NoIR display consumer
+
+`camera_preview_receiver` is registered on the three existing native NIR
+image/CameraInfo/CameraFrameMetadata topics. It is opt-in, read-only and may run
+in a DDS context separate from the mission host. Exact capture stamp/frame
+triplets support a **display-only** raw mono/Bayer viewer: both `nir` and
+`unfiltered_noir` remain honestly labelled, with `v4l2` versus `file_replay`
+provenance preserved. Unknown calibration permits an uncalibrated display,
+never RGB/AI/NDVI availability. No IDL, publisher or wire layout changes.
+
 ## Why this repository exists
 
 Three topics that cross a node boundary have no official ROS type:

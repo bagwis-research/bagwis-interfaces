@@ -18,6 +18,10 @@ changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ### Added
 
+- Register optional read-only `camera_preview_receiver` on the three native NIR
+  triplet topics for labelled raw NoIR display, including stock/unfiltered NoIR
+  without asserting scientific eligibility. Regenerate registry constants;
+  no IDL or wire-layout changes.
 - Registry-only continuous calibrated preview topics: `AI_NDVI_IMAGE`
   (`sensor_msgs/Image`), `AI_NDVI_PREVIEW_COMPRESSED`
   (`sensor_msgs/CompressedImage`) and transient-local `AI_NDVI_STATUS`

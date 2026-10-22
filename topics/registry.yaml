@@ -83,21 +83,22 @@ topics:
     name: /camera/nir/image_raw/compressed
     type: sensor_msgs/msg/CompressedImage
     publisher: v4l2_camera_node
-    subscribers: [ndvi_computation_node, ndvi_preview_node]
+    subscribers: [ndvi_computation_node, ndvi_preview_node, camera_preview_receiver]
     qos: image_stream
+    note: camera_preview_receiver is opt-in display-only raw NoIR; never republishes RGB or science topics
 
   - const: CAMERA_NIR_INFO
     name: /camera/nir/camera_info
     type: sensor_msgs/msg/CameraInfo
     publisher: v4l2_camera_node
-    subscribers: [ndvi_computation_node, ndvi_preview_node]
+    subscribers: [ndvi_computation_node, ndvi_preview_node, camera_preview_receiver]
     qos: default
 
   - const: CAMERA_NIR_FRAME_METADATA
     name: /camera/nir/frame_metadata
     type: bagwis_interfaces/msg/CameraFrameMetadata
     publisher: v4l2_camera_node
-    subscribers: [ndvi_computation_node, ndvi_preview_node]
+    subscribers: [ndvi_computation_node, ndvi_preview_node, camera_preview_receiver]
     qos: default
 
   - const: CAMERA_FRAME_METADATA

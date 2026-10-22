@@ -21,6 +21,7 @@ export const CAMERA_IMAGE_PROCESSED = "/camera/image_processed" as const;
 /** Type: `sensor_msgs/msg/CameraInfo` */
 export const CAMERA_INFO = "/camera/camera_info" as const;
 
+/** camera_preview_receiver is opt-in display-only raw NoIR; never republishes RGB or science topics */
 /** Type: `sensor_msgs/msg/CompressedImage` */
 export const CAMERA_NIR_IMAGE_RAW_COMPRESSED = "/camera/nir/image_raw/compressed" as const;
 
