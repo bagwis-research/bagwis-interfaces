@@ -14,6 +14,27 @@ Consumers pin a tag, never a branch. CI fails when a file under `msg/` or `srv/`
 changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
+## [Unreleased] — 2026-10-22
+
+### Added
+
+- Registry-only continuous calibrated preview topics: `AI_NDVI_IMAGE`
+  (`sensor_msgs/Image`), `AI_NDVI_PREVIEW_COMPRESSED`
+  (`sensor_msgs/CompressedImage`) and transient-local `AI_NDVI_STATUS`
+  (`diagnostic_msgs/DiagnosticArray`). No custom IDL or wire-layout changes.
+- `ndvi_preview_node` receives all six existing RGB/NIR camera triplet topics.
+  `rosbridge_websocket_node` receives only the preview JPEG and status; existing
+  admitted `AI_NDVI` analytics subscribers remain unchanged.
+- Capture-matched eligibility/status semantics, actual replay/live provenance,
+  fixed-scale false colour and explicit refusal of stock/unfiltered NoIR as a
+  calibrated NIR measurement documented in the existing README. Generated
+  Python/C++/TypeScript registry constants are committed with this change.
+
+This local integration revision is not a stable release or physical calibration
+qualification; runtime verification belongs to consuming repositories.
+
+---
+
 ## [1.4.0-rc.1] — 2026-10-21
 
 Additive testing candidate based on `v1.3.0-rc.2` (minor bump, FR-IF-05); ROS

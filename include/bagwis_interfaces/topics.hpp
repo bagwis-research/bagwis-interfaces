@@ -53,6 +53,18 @@ inline constexpr char AI_DETECTIONS[] = "/ai/detections";
 /// Type: bagwis_interfaces/msg/NdviResult
 inline constexpr char AI_NDVI[] = "/ai/ndvi";
 
+/// continuous calibrated full RGB-plane 32FC1 NDVI, NaN invalid and finite values in [-1,1]; original RGB capture stamp and optical frame; independent of admitted analytics
+/// Type: sensor_msgs/msg/Image
+inline constexpr char AI_NDVI_IMAGE[] = "/ai/ndvi/image";
+
+/// bounded false-colour JPEG with fixed [-1,1] scale and NaN black; capture stamp matches AI_NDVI_STATUS capture_stamp_ns, labelled calibration and actual source
+/// Type: sensor_msgs/msg/CompressedImage
+inline constexpr char AI_NDVI_PREVIEW_COMPRESSED[] = "/ai/ndvi/preview/compressed";
+
+/// 1 Hz heartbeat with DiagnosticStatus name bagwis/ndvi_preview, OK only for fresh valid calibrated frame; KeyValue calibration_id, capture_stamp_ns (RGB capture decimal, 0 unknown), source (v4l2/file_replay/mixed); header is heartbeat time
+/// Type: diagnostic_msgs/msg/DiagnosticArray
+inline constexpr char AI_NDVI_STATUS[] = "/ai/ndvi/status";
+
 /// NEW -- not in SRS-00 SS3; FR-CN-07, FR-CN-09. health_node copies it to SystemHealth
 /// Type: bagwis_interfaces/msg/AdmissionStatus
 inline constexpr char CORE_ADMISSION_STATUS[] = "/core/admission_status";

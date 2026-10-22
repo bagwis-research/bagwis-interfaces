@@ -57,6 +57,22 @@ AI_DETECTIONS = '/ai/detections'
 #: bagwis_interfaces/msg/NdviResult
 AI_NDVI = '/ai/ndvi'
 
+# continuous calibrated full RGB-plane 32FC1 NDVI, NaN invalid and finite values in [-1,1];
+# original RGB capture stamp and optical frame; independent of admitted analytics
+#: sensor_msgs/msg/Image
+AI_NDVI_IMAGE = '/ai/ndvi/image'
+
+# bounded false-colour JPEG with fixed [-1,1] scale and NaN black; capture stamp matches
+# AI_NDVI_STATUS capture_stamp_ns, labelled calibration and actual source
+#: sensor_msgs/msg/CompressedImage
+AI_NDVI_PREVIEW_COMPRESSED = '/ai/ndvi/preview/compressed'
+
+# 1 Hz heartbeat with DiagnosticStatus name bagwis/ndvi_preview, OK only for fresh valid calibrated
+# frame; KeyValue calibration_id, capture_stamp_ns (RGB capture decimal, 0 unknown), source
+# (v4l2/file_replay/mixed); header is heartbeat time
+#: diagnostic_msgs/msg/DiagnosticArray
+AI_NDVI_STATUS = '/ai/ndvi/status'
+
 # NEW -- not in SRS-00 SS3; FR-CN-07, FR-CN-09. health_node copies it to SystemHealth
 #: bagwis_interfaces/msg/AdmissionStatus
 CORE_ADMISSION_STATUS = '/core/admission_status'
@@ -159,6 +175,7 @@ TOPICS = {
         'subscribers': [
             'preprocessing_node',
             'ndvi_computation_node',
+            'ndvi_preview_node',
             'rosbridge_websocket_node',
             'health_node',
         ],
@@ -177,6 +194,7 @@ TOPICS = {
         'publisher': 'v4l2_camera_node',
         'subscribers': [
             'ndvi_computation_node',
+            'ndvi_preview_node',
             'georeferencing_node',
             'rosbridge_websocket_node',
         ],
@@ -186,28 +204,28 @@ TOPICS = {
         'name': '/camera/nir/image_raw/compressed',
         'type': 'sensor_msgs/msg/CompressedImage',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['ndvi_computation_node'],
+        'subscribers': ['ndvi_computation_node', 'ndvi_preview_node'],
         'qos': 'image_stream',
     },
     'CAMERA_NIR_INFO': {
         'name': '/camera/nir/camera_info',
         'type': 'sensor_msgs/msg/CameraInfo',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['ndvi_computation_node'],
+        'subscribers': ['ndvi_computation_node', 'ndvi_preview_node'],
         'qos': 'default',
     },
     'CAMERA_NIR_FRAME_METADATA': {
         'name': '/camera/nir/frame_metadata',
         'type': 'bagwis_interfaces/msg/CameraFrameMetadata',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['ndvi_computation_node'],
+        'subscribers': ['ndvi_computation_node', 'ndvi_preview_node'],
         'qos': 'default',
     },
     'CAMERA_FRAME_METADATA': {
         'name': '/camera/frame_metadata',
         'type': 'bagwis_interfaces/msg/CameraFrameMetadata',
         'publisher': 'v4l2_camera_node',
-        'subscribers': ['ndvi_computation_node'],
+        'subscribers': ['ndvi_computation_node', 'ndvi_preview_node'],
         'qos': 'default',
     },
     'AI_DETECTIONS_RAW': {
@@ -235,6 +253,27 @@ TOPICS = {
         'publisher': 'ndvi_computation_node',
         'subscribers': ['georeferencing_node', 'dynamic_sampling_node', 'health_node'],
         'qos': 'default',
+    },
+    'AI_NDVI_IMAGE': {
+        'name': '/ai/ndvi/image',
+        'type': 'sensor_msgs/msg/Image',
+        'publisher': 'ndvi_preview_node',
+        'subscribers': [],
+        'qos': 'image_stream',
+    },
+    'AI_NDVI_PREVIEW_COMPRESSED': {
+        'name': '/ai/ndvi/preview/compressed',
+        'type': 'sensor_msgs/msg/CompressedImage',
+        'publisher': 'ndvi_preview_node',
+        'subscribers': ['rosbridge_websocket_node'],
+        'qos': 'image_stream',
+    },
+    'AI_NDVI_STATUS': {
+        'name': '/ai/ndvi/status',
+        'type': 'diagnostic_msgs/msg/DiagnosticArray',
+        'publisher': 'ndvi_preview_node',
+        'subscribers': ['rosbridge_websocket_node'],
+        'qos': 'transient_local',
     },
     'CORE_ADMISSION_STATUS': {
         'name': '/core/admission_status',

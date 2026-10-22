@@ -71,6 +71,32 @@ ros.subscribe<NdviResult>(AI_NDVI, (m) => setNdvi(m.mean_ndvi));
 Generated files carry a `THIS FILE IS GENERATED` banner. Editing one by hand
 gets reverted by the next `generate.py` run and caught by CI before that.
 
+### Continuous calibrated NDVI preview
+
+The existing admitted-only `AI_NDVI` summary remains unchanged. Independently,
+`ndvi_preview_node` subscribes to the RGB/NIR compressed image, `CameraInfo`
+and `CameraFrameMetadata` triplets and publishes:
+
+| Constant | ROS type | Contract |
+| --- | --- | --- |
+| `AI_NDVI_IMAGE` | `sensor_msgs/msg/Image` | Full calibrated RGB-plane `32FC1`, little-endian, step `width * 4`; NaN invalid pixels, finite values in `[-1,1]`; original RGB capture stamp and optical frame |
+| `AI_NDVI_PREVIEW_COMPRESSED` | `sensor_msgs/msg/CompressedImage` | Bounded false-colour JPEG, fixed `[-1,+1]` scale, NaN black; original RGB capture stamp; labelled calibration ID and actual source |
+| `AI_NDVI_STATUS` | `diagnostic_msgs/msg/DiagnosticArray` | Reliable transient-local heartbeat, once per second; header is heartbeat time, not capture time |
+
+The status entry is named `bagwis/ndvi_preview`. Level `OK` means a fresh valid
+calibrated frame; `WARN`, `ERROR` or `STALE` means unavailable, with a human
+reason. Its `KeyValue` fields are `calibration_id`, `capture_stamp_ns` (decimal
+RGB capture nanoseconds, `0` when unknown), and `source` (`v4l2`,
+`file_replay`, or `mixed`). The bridge matches JPEG capture stamps to this
+status before serving `/ndvi.mjpeg`; source labels must not claim replay is live.
+
+This contract does not make stock/unfiltered NoIR a filtered NIR measurement.
+Missing or ineligible calibration, metadata, radiometry, stream pairing or
+spectral configuration produces status only, never proxy NDVI. The preview
+does not require GPS, detections, admission, or an active mission. These are
+standard ROS message types; no custom IDL or existing wire layout changes.
+
+
 ## Build
 
 ```bash
