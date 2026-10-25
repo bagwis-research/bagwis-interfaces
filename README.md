@@ -12,6 +12,23 @@ Specified by [`SRS-00-interfaces.md`](https://github.com/bagwis-research/bagwis-
 | **Consumers** | `bagwis-airborne`, `bagwis-core`, `bagwis-web` |
 | **Consumed as** | git submodule pinned to a **tag**, never a branch (FR-IF-04) |
 
+This private combined testing candidate is `v1.4.0-rc.2` (npm `1.4.0-rc.2`,
+ROS numeric `1.4.0`). It stacks registry-only preview additions on `a070edf`
+from `origin/feat/truck-capacity-setting`; interface PR #13 remains open.
+Core and web must pin the same immutable candidate. No camera metadata or
+truck-capacity wire layout changes from the truck candidate are introduced,
+and the physical Zero's camera interface pin need not change.
+
+## Optional raw NoIR display consumer
+
+`camera_preview_receiver` is registered on the three existing native NIR
+image/CameraInfo/CameraFrameMetadata topics. It is opt-in, read-only and may run
+in a DDS context separate from the mission host. Exact capture stamp/frame
+triplets support a **display-only** raw mono/Bayer viewer: both `nir` and
+`unfiltered_noir` remain honestly labelled, with `v4l2` versus `file_replay`
+provenance preserved. Unknown calibration permits an uncalibrated display,
+never RGB/AI/NDVI availability. No IDL, publisher or wire layout changes.
+
 ## Why this repository exists
 
 Three topics that cross a node boundary have no official ROS type:
@@ -70,6 +87,32 @@ ros.subscribe<NdviResult>(AI_NDVI, (m) => setNdvi(m.mean_ndvi));
 
 Generated files carry a `THIS FILE IS GENERATED` banner. Editing one by hand
 gets reverted by the next `generate.py` run and caught by CI before that.
+
+### Continuous calibrated NDVI preview
+
+The existing admitted-only `AI_NDVI` summary remains unchanged. Independently,
+`ndvi_preview_node` subscribes to the RGB/NIR compressed image, `CameraInfo`
+and `CameraFrameMetadata` triplets and publishes:
+
+| Constant | ROS type | Contract |
+| --- | --- | --- |
+| `AI_NDVI_IMAGE` | `sensor_msgs/msg/Image` | Full calibrated RGB-plane `32FC1`, little-endian, step `width * 4`; NaN invalid pixels, finite values in `[-1,1]`; original RGB capture stamp and optical frame |
+| `AI_NDVI_PREVIEW_COMPRESSED` | `sensor_msgs/msg/CompressedImage` | Bounded false-colour JPEG, fixed `[-1,+1]` scale, NaN black; original RGB capture stamp; labelled calibration ID and actual source |
+| `AI_NDVI_STATUS` | `diagnostic_msgs/msg/DiagnosticArray` | Reliable transient-local heartbeat, once per second; header is heartbeat time, not capture time |
+
+The status entry is named `bagwis/ndvi_preview`. Level `OK` means a fresh valid
+calibrated frame; `WARN`, `ERROR` or `STALE` means unavailable, with a human
+reason. Its `KeyValue` fields are `calibration_id`, `capture_stamp_ns` (decimal
+RGB capture nanoseconds, `0` when unknown), and `source` (`v4l2`,
+`file_replay`, or `mixed`). The bridge matches JPEG capture stamps to this
+status before serving `/ndvi.mjpeg`; source labels must not claim replay is live.
+
+This contract does not make stock/unfiltered NoIR a filtered NIR measurement.
+Missing or ineligible calibration, metadata, radiometry, stream pairing or
+spectral configuration produces status only, never proxy NDVI. The preview
+does not require GPS, detections, admission, or an active mission. These are
+standard ROS message types; no custom IDL or existing wire layout changes.
+
 
 ## Build
 

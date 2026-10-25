@@ -14,6 +14,41 @@ Consumers pin a tag, never a branch. CI fails when a file under `msg/` or `srv/`
 changes without a `<version>` bump in `package.xml` (FR-IF-07).
 
 ---
+## [1.4.0-rc.2] — 2026-10-22
+
+Registry-only testing successor to `1.4.0-rc.1`. ROS remains numeric `1.4.0`;
+the private npm package/lockfile and immutable local testing tag advance to
+`1.4.0-rc.2`. No additional field, message or service changes require another
+ROS minor version. This candidate is not published or stable.
+
+### Added
+
+- Register optional read-only `camera_preview_receiver` on the three native NIR
+  triplet topics for labelled raw NoIR display, including stock/unfiltered NoIR
+  without asserting scientific eligibility. Regenerate registry constants;
+  no IDL or wire-layout changes.
+- Registry-only continuous calibrated preview topics: `AI_NDVI_IMAGE`
+  (`sensor_msgs/Image`), `AI_NDVI_PREVIEW_COMPRESSED`
+  (`sensor_msgs/CompressedImage`) and transient-local `AI_NDVI_STATUS`
+  (`diagnostic_msgs/DiagnosticArray`). No custom IDL or wire-layout changes.
+- `ndvi_preview_node` receives all six existing RGB/NIR camera triplet topics.
+  `rosbridge_websocket_node` receives only the preview JPEG and status; existing
+  admitted `AI_NDVI` analytics subscribers remain unchanged.
+- Capture-matched eligibility/status semantics, actual replay/live provenance,
+  fixed-scale false colour and explicit refusal of stock/unfiltered NoIR as a
+  calibrated NIR measurement documented in the existing README. Generated
+  Python/C++/TypeScript registry constants are committed with this change.
+
+This local registry-only integration is stacked on `a070edf` from
+`origin/feat/truck-capacity-setting`; interface PR #13 remains open. It retains
+the 1.4.0 truck-capacity wire fields and the existing camera metadata unchanged,
+so the physical Zero's camera publishers need no pin change. Core and web use
+the same immutable combined commit during integration. This is not a stable
+release or physical calibration qualification; runtime verification belongs to
+consuming repositories.
+
+---
+
 ## [1.4.0-rc.1] — 2026-10-21
 
 Additive testing candidate based on `v1.3.0-rc.2` (minor bump, FR-IF-05); ROS

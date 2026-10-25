@@ -21,6 +21,7 @@ export const CAMERA_IMAGE_PROCESSED = "/camera/image_processed" as const;
 /** Type: `sensor_msgs/msg/CameraInfo` */
 export const CAMERA_INFO = "/camera/camera_info" as const;
 
+/** camera_preview_receiver is opt-in display-only raw NoIR; never republishes RGB or science topics */
 /** Type: `sensor_msgs/msg/CompressedImage` */
 export const CAMERA_NIR_IMAGE_RAW_COMPRESSED = "/camera/nir/image_raw/compressed" as const;
 
@@ -44,6 +45,18 @@ export const AI_DETECTIONS = "/ai/detections" as const;
 /** C-13 -- spelling is load-bearing. Shares a header stamp with AI_DETECTIONS. health_node derives nir_available from it (1.1.0) */
 /** Type: `bagwis_interfaces/msg/NdviResult` */
 export const AI_NDVI = "/ai/ndvi" as const;
+
+/** continuous calibrated full RGB-plane 32FC1 NDVI, NaN invalid and finite values in [-1,1]; original RGB capture stamp and optical frame; independent of admitted analytics */
+/** Type: `sensor_msgs/msg/Image` */
+export const AI_NDVI_IMAGE = "/ai/ndvi/image" as const;
+
+/** bounded false-colour JPEG with fixed [-1,1] scale and NaN black; capture stamp matches AI_NDVI_STATUS capture_stamp_ns, labelled calibration and actual source */
+/** Type: `sensor_msgs/msg/CompressedImage` */
+export const AI_NDVI_PREVIEW_COMPRESSED = "/ai/ndvi/preview/compressed" as const;
+
+/** 1 Hz heartbeat with DiagnosticStatus name bagwis/ndvi_preview, OK only for fresh valid calibrated frame; KeyValue calibration_id, capture_stamp_ns (RGB capture decimal, 0 unknown), source (v4l2/file_replay/mixed); header is heartbeat time */
+/** Type: `diagnostic_msgs/msg/DiagnosticArray` */
+export const AI_NDVI_STATUS = "/ai/ndvi/status" as const;
 
 /** NEW -- not in SRS-00 SS3; FR-CN-07, FR-CN-09. health_node copies it to SystemHealth */
 /** Type: `bagwis_interfaces/msg/AdmissionStatus` */
@@ -137,6 +150,9 @@ export const ALL_TOPICS = [
   AI_DETECTIONS_RAW,
   AI_DETECTIONS,
   AI_NDVI,
+  AI_NDVI_IMAGE,
+  AI_NDVI_PREVIEW_COMPRESSED,
+  AI_NDVI_STATUS,
   CORE_ADMISSION_STATUS,
   CORE_GEO_DETECTIONS,
   CORE_GEOREFERENCING_STATUS,
